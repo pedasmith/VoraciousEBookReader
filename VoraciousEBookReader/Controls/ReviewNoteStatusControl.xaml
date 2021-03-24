@@ -1,0 +1,82 @@
+﻿<UserControl
+    x:Class="SimpleEpubReader.Controls.ReviewNoteStatusControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:local="using:SimpleEpubReader.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="700"
+    d:DesignWidth="400">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <local:BookCard MaxHeight="200" Grid.Row="0" x:Name="uiBookCard" />
+        <StackPanel Grid.Row="3">
+            <RadioButton Content="I'm still reading this book" x:Name="uiUserStatusReading" GroupName="grpUserStatus" Checked="OnUserStatusChecked"  />
+            <RadioButton Content="Done reading" x:Name="uiUserStatusDone" GroupName="grpUserStatus" Checked="OnUserStatusChecked" />
+            <RadioButton Content="Abandon this book" x:Name="uiUserStatusAbandoned" GroupName="grpUserStatus" Checked="OnUserStatusChecked" />
+            <!-- From the main page you can also set 'act like I haven't read this book'  -->
+        </StackPanel>
+        <controls:TabView Grid.Row="4" SelectedIndex="0" SelectionChanged="OnReviewOrNote">
+            <controls:TabViewItem Header="Review">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <RatingControl Grid.Column="0" x:Name="uiNStars" Caption="Rating" 
+                           VerticalAlignment="Bottom" Margin="0,0,20,0" 
+                           IsClearEnabled="True" IsReadOnly="false" 
+                           MaxRating="5" ValueChanged="OnStarRatingChanged" />
+                        <TextBox x:Name="uiTags" Header="Review #Tags" Grid.Column="1" Margin="20,0,0,0" 
+                     TextWrapping="Wrap" 
+                     TextChanged="OnTagChanged" />
+                    </Grid>
+
+                    <local:MarkdownEditor Grid.Row="1" x:Name="uiReview" VerticalAlignment="Stretch" />
+                </Grid>
+            </controls:TabViewItem>
+            <controls:TabViewItem Header="Notes" Tag="//notes//">
+                <local:NoteEditor x:Name="uiNoteEditor" VerticalAlignment="Stretch" />
+            </controls:TabViewItem>
+        </controls:TabView>
+
+        <ScrollViewer Grid.Row="5" x:Name="uiFullDetails" MaxHeight="50" Visibility="Collapsed">
+            <StackPanel>
+                <!-- From BookNavigationData -->
+                <TextBlock><Run Text="# Catalog Views"/><Run x:Name="uiNCatalogViews" /></TextBlock>
+                <TextBlock><Run Text="# Swipe Left"/><Run x:Name="uiNSwipeLeft" /></TextBlock>
+                <TextBlock><Run Text="# Swipe Right"/><Run x:Name="uiNSwipeRight" /></TextBlock>
+                <TextBlock><Run Text="# Reading"/><Run x:Name="uiNReading" /></TextBlock>
+                <TextBlock><Run Text="# Specifically selected"/><Run x:Name="uiNSpecificSelection" /></TextBlock>
+
+                <!-- From DownloadData, but should be in NavigationData -->
+                <TextBlock><Run Text="Current Spot"/><Run x:Name="uiCurrSpot" /></TextBlock>
+                <TextBlock><Run Text="Reading Status"/><Run x:Name="uiCurrStatus" /></TextBlock>
+
+
+                <!-- From DownloadData -->
+                <TextBlock><Run Text="Book ID"/><Run x:Name="uiBookId" /></TextBlock>
+                <TextBlock><Run Text="File path"/><Run x:Name="uiFilePath" /></TextBlock>
+                <TextBlock><Run Text="File name"/><Run x:Name="uiFileName" /></TextBlock>
+                <TextBlock><Run Text="File status"/><Run x:Name="uiFileStatus" /></TextBlock>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+
+</UserControl>

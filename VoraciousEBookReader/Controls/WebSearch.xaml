@@ -1,0 +1,70 @@
+﻿<UserControl
+    x:Class="SimpleEpubReader.Controls.WebSearch"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SimpleEpubReader.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock FontWeight="Bold"
+                    FontFamily="{Binding StandardFF, Source={StaticResource UserCustomization}}"
+                    FontSize="{Binding HeaderTextFontSize, Source={StaticResource UserCustomization}}" 
+            ><Run>Web Search: </Run></TextBlock>
+
+        <WebView x:Name="uiSearchWeb" Grid.Row="1" />
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <ComboBox x:Name="uiSearchUrl" SelectedIndex="0" MinWidth="220">
+                <ComboBoxItem Content="Bing" Tag="https://www.bing.com/search?q={SEARCH}">
+                    <ComboBoxItem.ContentTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" 
+                                      FontFamily="{Binding StandardFF, Source={StaticResource UserCustomization}}"
+                                      FontSize="{Binding ButtonFontSize, Source={StaticResource UserCustomization}}" 
+                                       />
+                        </DataTemplate>
+                    </ComboBoxItem.ContentTemplate>
+                </ComboBoxItem>
+                <ComboBoxItem Content="Wikipedia" Tag="https://en.wikipedia.org/wiki/Special:Search?search={SEARCH}">
+                    <ComboBoxItem.ContentTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" 
+                                      FontFamily="{Binding StandardFF, Source={StaticResource UserCustomization}}"
+                                      FontSize="{Binding ButtonFontSize, Source={StaticResource UserCustomization}}" 
+                                       />
+                        </DataTemplate>
+                    </ComboBoxItem.ContentTemplate>                    
+                </ComboBoxItem>
+                <ComboBoxItem Content="Wiktionary" Tag="https://en.wiktionary.org/wiki/Special:Search?search={SEARCH}">
+                    <ComboBoxItem.ContentTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" 
+                                      FontFamily="{Binding StandardFF, Source={StaticResource UserCustomization}}"
+                                      FontSize="{Binding ButtonFontSize, Source={StaticResource UserCustomization}}" 
+                                       />
+                        </DataTemplate>
+                    </ComboBoxItem.ContentTemplate>                    
+                </ComboBoxItem>
+                <ComboBoxItem Content="Bing Map" Tag="https://www.bing.com/maps?where1={SEARCH}">
+                    <ComboBoxItem.ContentTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" 
+                                      FontFamily="{Binding StandardFF, Source={StaticResource UserCustomization}}"
+                                      FontSize="{Binding ButtonFontSize, Source={StaticResource UserCustomization}}" 
+                                       />
+                        </DataTemplate>
+                    </ComboBoxItem.ContentTemplate>                    
+                </ComboBoxItem>
+            </ComboBox>
+        </StackPanel>
+    </Grid>
+</UserControl>

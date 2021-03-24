@@ -1,0 +1,832 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{9C05FD09-9FA5-4F7D-BF36-29470C0AD94B}</ProjectGuid>
+    <OutputType>AppContainerExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SimpleEpubReader</RootNamespace>
+    <AssemblyName>SimpleEpubReader</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.18362.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
+    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <AppxBundle>Always</AppxBundle>
+    <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
+    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    <PackageCertificateKeyFile>VoraciousEBookReader_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <PackageCertificateThumbprint>0BFE574FD50CFE29A7E2E85F76DC9207CBC9E872</PackageCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;FULL_EREADER</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;FULL_EREADER</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;FULL_EREADER</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <OutputPath>bin\ARM\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;FULL_EREADER</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM64\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;FULL_EREADER</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM64'">
+    <OutputPath>bin\ARM64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;FULL_EREADER</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;FULL_EREADER</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <SuppressXamlWarnings>1500</SuppressXamlWarnings>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;FULL_EREADER</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <SuppressXamlWarnings>1500</SuppressXamlWarnings>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\EF_Is_Just_Plain_Dumb\Migrations\20200521055206_CreateBookData.cs">
+      <Link>Database\Migrations\20200521055206_CreateBookData.cs</Link>
+    </Compile>
+    <Compile Include="..\EF_Is_Just_Plain_Dumb\Migrations\20200521055206_CreateBookData.Designer.cs">
+      <Link>Database\Migrations\20200521055206_CreateBookData.Designer.cs</Link>
+    </Compile>
+    <Compile Include="..\EF_Is_Just_Plain_Dumb\Migrations\BookDataContextModelSnapshot.cs">
+      <Link>Database\Migrations\BookDataContextModelSnapshot.cs</Link>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AllUpBookPosition.xaml.cs">
+      <DependentUpon>AllUpBookPosition.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BookCard.xaml.cs">
+      <DependentUpon>BookCard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EbookReader\BookLocation.cs" />
+    <Compile Include="Controls\BookReview.xaml.cs">
+      <DependentUpon>BookReview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BookSearch.xaml.cs">
+      <DependentUpon>BookSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ChapterDisplay.xaml.cs">
+      <DependentUpon>ChapterDisplay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CustomizeControl.xaml.cs">
+      <DependentUpon>CustomizeControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\HelpControl.xaml.cs">
+      <DependentUpon>HelpControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ImageList.xaml.cs">
+      <DependentUpon>ImageList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MainEpubReader.xaml.cs">
+      <DependentUpon>MainEpubReader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MarkdownEditor.xaml.cs">
+      <DependentUpon>MarkdownEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EbookReader\Navigator.cs" />
+    <Compile Include="Controls\NoteCard.xaml.cs">
+      <DependentUpon>NoteCard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\NoteEditor.xaml.cs">
+      <DependentUpon>NoteEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\NoteList.xaml.cs">
+      <DependentUpon>NoteList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PersonCard.xaml.cs">
+      <DependentUpon>PersonCard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PickLanguageControl.xaml.cs">
+      <DependentUpon>PickLanguageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ProjectRomeActivity.cs" />
+    <Compile Include="Controls\ReviewNoteStatusControl.xaml.cs">
+      <DependentUpon>ReviewNoteStatusControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\UserReviewsAndNotes.xaml.cs">
+      <DependentUpon>UserReviewsAndNotes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\WebSearch.xaml.cs">
+      <DependentUpon>WebSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Database\BookData.cs" />
+    <Compile Include="Database\BookMarkFile.cs" />
+    <Compile Include="Database\CommonQueries.cs" />
+    <Compile Include="Database\GutenbergDownloadControl.xaml.cs">
+      <DependentUpon>GutenbergDownloadControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Database\GutenbergDownloader.cs" />
+    <Compile Include="Database\InitializeFilesToGet.cs" />
+    <Compile Include="Database\UserData.cs" />
+    <Compile Include="EbookReader\AllUpBookPositionCalculations.cs" />
+    <Compile Include="EbookReader\BookHandler.cs" />
+    <Compile Include="EbookReader\EpubBookExt.cs" />
+    <Compile Include="EpubSharp\EpubArchive.cs" />
+    <Compile Include="EpubSharp\EpubBook.cs" />
+    <Compile Include="EpubSharp\EpubException.cs" />
+    <Compile Include="EpubSharp\EpubReader.cs" />
+    <Compile Include="EpubSharp\EpubWriter.cs" />
+    <Compile Include="EpubSharp\Extensions\ByteArrayExt.cs" />
+    <Compile Include="EpubSharp\Extensions\PathExt.cs" />
+    <Compile Include="EpubSharp\Extensions\StreamExt.cs" />
+    <Compile Include="EpubSharp\Extensions\StringExt.cs" />
+    <Compile Include="EpubSharp\Extensions\XmlExt.cs" />
+    <Compile Include="EpubSharp\Extensions\ZipArchiveExt.cs" />
+    <Compile Include="EpubSharp\Format\Constants.cs" />
+    <Compile Include="EpubSharp\Format\ContentType.cs" />
+    <Compile Include="EpubSharp\Format\EpubFormat.cs" />
+    <Compile Include="EpubSharp\Format\NavDocument.cs" />
+    <Compile Include="EpubSharp\Format\NcxDocument.cs" />
+    <Compile Include="EpubSharp\Format\OcfDocument.cs" />
+    <Compile Include="EpubSharp\Format\OcfElements.cs" />
+    <Compile Include="EpubSharp\Format\OpfDocument.cs" />
+    <Compile Include="EpubSharp\Format\Readers\NavReader.cs" />
+    <Compile Include="EpubSharp\Format\Readers\NcxReader.cs" />
+    <Compile Include="EpubSharp\Format\Readers\OcfReader.cs" />
+    <Compile Include="EpubSharp\Format\Readers\OpfReader.cs" />
+    <Compile Include="EpubSharp\Format\Writers\MimeTypeWriter.cs" />
+    <Compile Include="EpubSharp\Format\Writers\NcxWriter.cs" />
+    <Compile Include="EpubSharp\Format\Writers\OcfWriter.cs" />
+    <Compile Include="EpubSharp\Format\Writers\OpfWriter.cs" />
+    <Compile Include="EpubSharp\Misc\Href.cs" />
+    <Compile Include="EpubSharp\Misc\Html.cs" />
+    <Compile Include="FileWizards\CssFixup.cs" />
+    <Compile Include="FileWizards\EpubWizard.cs" />
+    <Compile Include="FileWizards\GutenbergFileWizard.cs" />
+    <Compile Include="FileWizards\HtmlFixup.cs" />
+    <Compile Include="FileWizards\TextWizard.cs" />
+    <Compile Include="FileWizards\UriWizard.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="MainInitializationPage.xaml.cs">
+      <DependentUpon>MainInitializationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Searching\LinqSearch.cs" />
+    <Compile Include="Searching\SearchParser.cs" />
+    <Compile Include="Searching\SearchParserTest.cs" />
+    <Compile Include="UserCustomization.cs" />
+    <Compile Include="UwpClasses\BookmarkFileDirectory.cs" />
+    <Compile Include="UwpClasses\FileMethods.cs" />
+    <Compile Include="UwpClasses\FolderMethods.cs" />
+    <Compile Include="UwpClasses\HttpProgressConverter.cs" />
+    <Compile Include="UwpClasses\SimpleDialogs.cs" />
+    <Compile Include="UwpClasses\UwpRangeConverter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\HelpScreenShots\010-About-Voracious-Ebook-Reader.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\015-Right-pane-for-reading.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\020-Left-side-chapters.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\025-Left-side-images.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\030-Left-side-new-books.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Icons\Giuseppe-arcimboldo-the-librarian.jpg" />
+    <Content Include="Assets\Icons\LargeTile.png" />
+    <Content Include="Assets\Icons\LargeTile.scale-100.png" />
+    <Content Include="Assets\Icons\SmallTile.scale-100.png" />
+    <Content Include="Assets\Icons\SmallTile.scale-125.png" />
+    <Content Include="Assets\Icons\SmallTile.scale-150.png" />
+    <Content Include="Assets\Icons\SmallTile.scale-200.png" />
+    <Content Include="Assets\Icons\SmallTile.scale-400.png" />
+    <Content Include="Assets\Icons\SplashScreen.png" />
+    <Content Include="Assets\Icons\SplashScreen.scale-100.png" />
+    <Content Include="Assets\Icons\SplashScreen.scale-125.png" />
+    <Content Include="Assets\Icons\SplashScreen.scale-150.png" />
+    <Content Include="Assets\Icons\Square150x150Logo.scale-100.png" />
+    <Content Include="Assets\Icons\Square150x150Logo.scale-125.png" />
+    <Content Include="Assets\Icons\Square150x150Logo.scale-150.png" />
+    <Content Include="Assets\Icons\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.altform-unplated_targetsize-24.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.targetsize-24.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Assets\Icons\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Assets\Icons\StoreLogo.scale-100.png" />
+    <Content Include="Assets\Icons\StoreLogo.scale-125.png" />
+    <Content Include="Assets\Icons\StoreLogo.scale-150.png" />
+    <Content Include="Assets\Icons\StoreLogo.scale-200.png" />
+    <Content Include="Assets\Icons\StoreLogo.scale-400.png" />
+    <Content Include="Assets\Icons\Wide310x150Logo.png" />
+    <Content Include="Assets\Icons\Wide310x150Logo.scale-100.png" />
+    <Content Include="Assets\Icons\Wide310x150Logo.scale-125.png" />
+    <Content Include="Assets\Icons\Wide310x150Logo.scale-150.png" />
+    <Content Include="Assets\HelpScreenShots\050-Reading.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\051-Reading-NextPage.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\052-Reading-Buttons.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\053-Reading-AllUpBar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\054-Reading-Review.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\121-Review-Page.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\122-Review-Star.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\123-Review-Hashtag.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\124-Review-Done.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\125-Review-Markdown.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\130-Notes-Button.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\140-Finish-Button.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\141-Finish-Menu.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\150-Chapter-List.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\160-Image-List.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\161-Image-Zoom.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\170-Notes-List.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\180-Research.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\290-Search-Downlaoded.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\290-Search-Downloaded.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\291-Search-Current.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\292-Search-Done.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\293-Search-Allpng.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\294-Search-Download.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpScreenShots\295-Search-Elements.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Package.StoreAssociation.xml" />
+    <Content Include="Properties\Default.rd.xml" />
+    <Content Include="Assets\LockScreenLogo.scale-200.png" />
+    <Content Include="Assets\SplashScreen.scale-200.png" />
+    <Content Include="Assets\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Assets\StoreLogo.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <None Include="VoraciousEBookReader_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="Controls\AllUpBookPosition.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\BookCard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\BookReview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\BookSearch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ChapterDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\CustomizeControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\HelpControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ImageList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MainEpubReader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MarkdownEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\NoteCard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\NoteEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\NoteList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PersonCard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PickLanguageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ReviewNoteStatusControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\UserReviewsAndNotes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\WebSearch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Database\GutenbergDownloadControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainInitializationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ExCSS">
+      <Version>4.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore">
+      <Version>3.1.7</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite">
+      <Version>3.1.7</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>6.2.10</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
+      <Version>6.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="PCLStorage">
+      <Version>1.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="sharpcompress">
+      <Version>0.26.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Database\RdfReader.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Searching\SearchClasses.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\PreinstalledBooks\Adventures_of_Huckleberry_by_Twain_Mark.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Alices_Adventures_in_by_Carroll_Lewis.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Anna_Karenina_by_Tolstoy_Leo_graf.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Anne_of_Green_Gables_by_Montgomery_L_M__Lucy.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Anthem_by_Rand_Ayn.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\An_Occurrence_at_Owl_by_Bierce_Ambrose.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\A_Christmas_Carol_in_by_Dickens_Charles.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\A_Dolls_House___a_play_by_Ibsen_Henrik.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\A_History_of_Epidemics_by_Creighton_Charles.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\A_Journal_of_the_Plague_by_Defoe_Daniel.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\A_Modest_Proposal--For_by_Swift_Jonathan.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\A_Study_in_Scarlet_by_Doyle_Arthur_Conan.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\A_Tale_of_Two_Cities_by_Dickens_Charles.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Beowulf__An_Anglo_Saxon_by_Hall_J_Lesslie__John.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Beyond_Good_and_Evil_by_Nietzsche_Friedrich.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Candide_by_Voltaire.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Crime_and_Punishment_by_Dostoyevsky_Fyodor.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\David_Copperfield_by_Dickens_Charles.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Don_Quixote_by_Cervantes_Saavedra_Miguel.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Dracula_by_Stoker_Bram.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Dubliners_by_Joyce_James.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Emma_by_Austen_Jane.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Essays_of_Michel_de_Montaigne_by_Montaigne_Michel_de.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Frankenstein__Or_The_by_Shelley_Mary_Wollstonecraft.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Great_Expectations_by_Dickens_Charles.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Grimms_Fairy_Tales_by_Grimm_Jacob.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Gullivers_Travels_into_by_Swift_Jonathan.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Heart_of_Darkness_by_Conrad_Joseph.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Ion_by_Plato.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Jane_Eyre__An_Autobiography_by_Brontë_Charlotte.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Leaves_of_Grass_by_Whitman_Walt.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Les_Misérables_by_Hugo_Victor.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Leviathan_by_Hobbes_Thomas.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Little_Women_by_Alcott_Louisa_May.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Meditations_by_Marcus_Aurelius_Emperor.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Metamorphosis_by_Kafka_Franz.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Moby_Dick__Or_The_Whale_by_Melville_Herman.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Narrative_of_the_Life_by_Douglass_Frederick.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Oliver_Twist_by_Dickens_Charles.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\On_the_Origin_of_Species_by_Darwin_Charles.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Peter_Pan_by_Barrie_J_M__James.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Pride_and_Prejudice_by_Austen_Jane.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Pygmalion_by_Shaw_Bernard.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Sense_and_Sensibility_by_Austen_Jane.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Siddhartha_by_Hesse_Hermann.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Adventures_of_Sherlock_by_Doyle_Arthur_Conan.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Adventures_of_Tom_by_Twain_Mark.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Awakening_and_Selected_by_Chopin_Kate.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Brothers_Karamazov_by_Dostoyevsky_Fyodor.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Call_of_the_Wild_by_London_Jack.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Complete_Works_of_by_Shakespeare_William.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Confessions_of_St_by_Augustine_Saint_Bishop.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Count_of_Monte_Cristo__by_Dumas_Alexandre.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Decameron_of_Giovanni_by_Boccaccio_Giovanni.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Hound_of_the_Baskervilles_by_Doyle_Arthur_Conan.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Iliad_by_Homer.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Importance_of_Being_by_Wilde_Oscar.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Jungle_Book_by_Kipling_Rudyard.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Jungle_by_Sinclair_Upton.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Life_and_Adventures_by_Defoe_Daniel.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Mariner_of_St_Malo_by_Leacock_Stephen.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Masque_of_the_Red_by_Poe_Edgar_Allan.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Memoirs_Correspondence__by_Jefferson_Thomas.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Mysterious_Affair_by_Christie_Agatha.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Odyssey--Rendered_by_Homer.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Picture_of_Dorian_by_Wilde_Oscar.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Prince_by_Machiavelli_Niccolò.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Prophet_by_Gibran_Kahlil.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Republic_by_Plato.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Scarlet_Letter_by_Hawthorne_Nathaniel.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Secret_Garden_by_Burnett_Frances_Hodgson.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Sign_of_the_Four_by_Doyle_Arthur_Conan.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Slang_Dictionary__by_Hotten_John_Camden.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Souls_of_Black_Folk_by_Du_Bois_W_E_B__William.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Strange_Case_of_Dr_by_Stevenson_Robert_Louis.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Tale_of_Peter_Rabbit_by_Potter_Beatrix.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Time_Machine_by_Wells_H_G__Herbert.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_War_of_the_Worlds_by_Wells_H_G__Herbert.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Wonderful_Wizard_by_Baum_L_Frank__Lyman.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Works_of_Edgar_Allan_by_Poe_Edgar_Allan.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\The_Yellow_Wallpaper_by_Gilman_Charlotte_Perkins.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Thus_Spake_Zarathustra__by_Nietzsche_Friedrich.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Treasure_Island_by_Stevenson_Robert_Louis.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Ulysses_by_Joyce_James.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Uncle_Toms_Cabin_by_Stowe_Harriet_Beecher.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Walden_and_On_The_Duty_by_Thoreau_Henry_David.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\War_and_Peace_by_Tolstoy_Leo_graf.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\PreinstalledBooks\Wuthering_Heights_by_Brontë_Emily.epub">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\InitialBookData.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
+    <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

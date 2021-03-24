@@ -1,0 +1,78 @@
+﻿<Page
+    x:Class="SimpleEpubReader.MainInitializationPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SimpleEpubReader"
+    xmlns:bookcontrols="using:SimpleEpubReader.Controls"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        
+        <!-- TODO: make it nice, handle font size, etc -->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0">
+                <TextBlock FontSize="30" FontWeight="Bold" TextWrapping="WrapWholeWords">Preparing dozens of FREE ebooks for first use!</TextBlock>
+                <Rectangle Height="30" />
+                <ProgressBar x:Name="uiProgress" HorizontalAlignment="Stretch" MinHeight="10" />
+                <ProgressRing x:Name="uiProgressRing" HorizontalAlignment="Left" />
+                <TextBlock x:Name="uiFolder" IsTextSelectionEnabled="True" />
+                <Rectangle Height="60"/>
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="1">
+                <TextBlock TextWrapping="WrapWholeWords" FontSize="16">
+                This is just a one-time thing -- we're setting up your FREE ebooks
+                to be read. And we're preparing the database of tens of thousands of 
+                complete free e-books to read.
+                <LineBreak />
+                <LineBreak />
+                All these books are in the public domain; they include classics
+                like Jane Eyre, plus hundred of children's books, science-fiction,
+                mystery, and classic science texts.
+                <LineBreak />
+                <LineBreak />
+                The Voracious Reader shows you the 
+                table of contents, images, and web research while you're reading
+                the book. The annotated screen shots on the right show you how it works.
+                <LineBreak />
+                <LineBreak />
+                Click the <Bold>START</Bold> button when you're ready to start!
+                </TextBlock>
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="2">
+                <Rectangle Height="40" />
+                <Button x:Name="uiStart" Content="START" IsEnabled="false" Click="OnStart" />
+                <Rectangle Height="10" />
+            </StackPanel>
+        </Grid>
+
+        <controls:GridSplitter Grid.Column="1" Width="20" ResizeBehavior="BasedOnAlignment"
+            ResizeDirection="Auto" Background="Gray" Foreground="White" FontSize="13">
+            <controls:GridSplitter.Element>
+                <Grid>
+                    <TextBlock HorizontalAlignment="Center" IsHitTestVisible="False" VerticalAlignment="Center"  
+                               Text="&#xE784;" Foreground="Black" FontFamily="Segoe MDL2 Assets">
+                    </TextBlock>
+                </Grid>
+            </controls:GridSplitter.Element>
+        </controls:GridSplitter>
+
+        <bookcontrols:HelpControl Grid.Column="2" />
+    </Grid>
+</Page>

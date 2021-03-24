@@ -1,0 +1,14 @@
+﻿<Application
+    x:Class="SimpleEpubReader.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:local="using:SimpleEpubReader">
+    <Application.Resources>
+        <!-- Fake object added to the app resources. In app.xaml.cs UserCustomization is replaced by a real object.
+        This fake is here only so that the XAML editor won't keep flagging every single chunk of resizable code
+        as an error because UserCustomization can't be found.
+        -->
+        <x:Double x:Key="UserCustomization">5.5</x:Double>
+    </Application.Resources>
+</Application>
