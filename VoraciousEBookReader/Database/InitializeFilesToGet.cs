@@ -17,6 +17,11 @@ namespace SimpleEpubReader.Database
 
     class InitializeFilesToGet
     {
+        /// <summary>
+        /// Return TRUE if the local database doesn't exist. This will be true only for the first
+        /// time the app is run.
+        /// </summary>
+        /// <returns></returns>
         public static bool GetMustCopyInitialDatabase()
         {
             var destinationFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
@@ -26,6 +31,13 @@ namespace SimpleEpubReader.Database
             var retval = !task.Result;
             return retval;
         }
+
+        /// <summary>
+        /// Called just once when the app is first run to move the read-only zipped database into
+        /// the final read/write position.
+        /// </summary>
+        /// <param name="progressBar"></param>
+        /// <returns></returns>
         public static async Task CopyAssetDatabaseIfNeededAsync(UwpRangeConverter progressBar)
         {
             var destinationFolder = FolderMethods.LocalFolder;
@@ -35,8 +47,8 @@ namespace SimpleEpubReader.Database
             var exists = await destinationFolderFolder.CheckExistsAsync(BookDataContext.BookDataDatabaseFilename);
 
             var existingFile = await FolderMethods.GetFileAsync(destinationFolderFolder, BookDataContext.BookDataDatabaseFilename);
-            bool copyFileAsNeeded = true; 
-            copyFileAsNeeded = true; // // TODO: this should be true when shipping!
+            bool copyFileAsNeeded = true; // CHECK: this should always be true when shipping! 
+            // (It's sometimes set FALSE when debugging the asset code)
             if (exists != ExistenceCheckResult.FileExists && copyFileAsNeeded)
             {
                 progressBar.Minimum = 0;
@@ -48,7 +60,7 @@ namespace SimpleEpubReader.Database
                 System.Diagnostics.Debug.WriteLine($"Moving initial db: to={destinationFolder}");
 
                 // Its a zipped copy; grab the inner file and expand it out!
-                // Can't ust copy the file: await originalInstalledFile.CopyAsync(destinationFolder, BookDataContext.BookDataDatabaseFilename);
+                // Can't just copy the file: await originalInstalledFile.CopyAsync(destinationFolder, BookDataContext.BookDataDatabaseFilename);
 
                 using (var stream = await zipfile.OpenAsync(PCLStorage.FileAccess.Read))
                 {
@@ -62,7 +74,13 @@ namespace SimpleEpubReader.Database
                             progressBar.Value = 0;
 
                             var filestream = reader.OpenEntryStream();
-                            var outfile = await destinationFolderFolder.CreateFileAsync (reader.Entry.Key, CreationCollisionOption.ReplaceExisting);
+                            var startfile = reader.Entry.Key;
+                            var finalfile = startfile;
+                            if (finalfile == "InitialBookData.Db")
+                            {
+                                finalfile = "BookData.Db";
+                            }
+                            var outfile = await destinationFolderFolder.CreateFileAsync (finalfile, CreationCollisionOption.ReplaceExisting);
                             var outstream = await outfile.OpenAsync (PCLStorage.FileAccess.ReadAndWrite);
                             byte[] buffer = new byte[1_000_000]; // 1 meg at a time
                             bool keepGoing = true;
@@ -100,6 +118,13 @@ namespace SimpleEpubReader.Database
             //var preinstallFolder = await installationFolder.GetFolderAsync(@"Assets\PreinstalledBooks");
             await MainPage.MarkAllDownloadedFiles(bookdb, preinstallFolder);
         }
+
+        /// <summary>
+        /// Given the InitialBookIds from Gutenberg, download each one into the Assets/PreinstalledBooks folder. Does a pause between 
+        /// each download to be nice, so it's a slow process. As of 2021-04-04, this is reduced to just 5 books.
+        /// </summary>
+        /// <param name="bookdb"></param>
+        /// <returns></returns>
 
         public async Task<int> DownloadBooksAsync(BookDataContext bookdb)
         {
@@ -174,7 +199,7 @@ namespace SimpleEpubReader.Database
                         continue;
 
                     }
-                    var buffer = await responseMessage.Content.ReadAsByteArrayAsync(); //.ReadAsBufferAsync(); // gest entire buffer at once.
+                    var buffer = await responseMessage.Content.ReadAsByteArrayAsync(); //.ReadAsBufferAsync(); // gets entire buffer at once.
 
                     if (buffer.Length > 2000)
                     {
@@ -202,8 +227,22 @@ namespace SimpleEpubReader.Database
         }
 
 
-        // List of books in the Gutenberg Top 100, minus a few.
+        /// <summary>
+        /// List of books in the Gutenberg Top 100, minus a few.
+        /// </summary>
         public string[] InitialBookIds =
+        {
+            "ebooks/11",
+            "ebooks/23",
+            "ebooks/863",
+            "ebooks/1661",
+            "ebooks/2680",
+        };
+
+        /// <summary>
+        /// Original long List of books in the Gutenberg Top 100, minus a few.
+        /// </summary>
+        public string[] InitialBookIdsTop100 =
         {
             "ebooks/100",
             "ebooks/1064",

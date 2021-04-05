@@ -2,6 +2,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -114,6 +115,15 @@ namespace SimpleEpubReader.Database
             }
         }
 
+        public static Uri CurrentGutenbergCatalogLocation
+        {
+            get
+            {
+                var uri = new Uri("http://www.gutenberg.org/cache/epub/feeds/rdf-files.tar.zip");
+                return uri;
+            }
+        }
+
         DateTimeOffset StartTime;
         /// <summary>
         /// Primary real code to download file and then parse it for new books.
@@ -125,7 +135,7 @@ namespace SimpleEpubReader.Database
             var bookdb = BookDataContext.Get();
             // http://www.gutenberg.org/wiki/Gutenberg:Feeds
             // http://www.gutenberg.org/cache/epub/feeds/rdf-files.tar.zip
-            var uri = new Uri("http://www.gutenberg.org/cache/epub/feeds/rdf-files.tar.zip");
+            var uri = CurrentGutenbergCatalogLocation;
             var folder = FolderMethods.LocalCacheFolder;
             var filename = "gutenberg.zip";
             NNewBooks = 0;
@@ -140,7 +150,8 @@ namespace SimpleEpubReader.Database
                 StartTime = DateTimeOffset.Now;
                 await LogAsync("Processing catalog\n");
                 var fullpath = folder + @"\" + filename;
-                var file = await PCLStorage.FileSystem.Current.GetFileFromPathAsync(fullpath);
+                //var file = await PCLStorage.FileSystem.Current.GetFileFromPathAsync(fullpath);
+                var file = await StorageFile.GetFileFromPathAsync(fullpath);
 
                 int retval = 0;
                 uiProgress.Maximum = 80000; // the max is the number of books I expect to process.
@@ -152,6 +163,7 @@ namespace SimpleEpubReader.Database
                 await Task.Run(async () =>
                 {
                     retval = await RdfReader.ReadZipTarRdfFileAsync(this, bookdb, file, cts.Token, RdfReader.UpdateType.Fast);
+                    BookDataContext.ResetSingleton(null); // must reset database (otherwise no records can be found)
                     ;
                 });
                 ;

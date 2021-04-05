@@ -319,7 +319,7 @@ function SetColor(background, foreground) {
             // FAIL: Baen puts their covers in an SVG (!) like this: <image width="450" height="680" xlink:href="cover.jpeg"/>
             Regex[] regexList = {
                 new Regex("<(?<tag>image) (?<pre>(([^x]|(x[^l]))[a-z]*=\"[^\"]*\"[ ]*)*)xlink:href=\"(?<src>[^\"]*)\""),
-                new Regex("<(?<tag>img) (?<pre>(([^s]|(s[^r]))[a-z]*=\"[^\"]*\"[ ]*)*)src=\"(?<src>[^\"]*)\""),
+                new Regex("<(?<tag>img) (?<pre>(([^s]|(s[^r]))[a-z\\-]*=\"[^\"]*\"[ ]*)*)src=\"(?<src>[^\"]*)\""),
                 new Regex("<(?<tag>link) (?<pre>(([^h]|(h[^r]))[a-z]*=\"[^\"]*\"[ ]*)*)href=\"(?<src>[^\"]*)\""),
             };
 

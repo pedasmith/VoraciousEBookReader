@@ -16,6 +16,11 @@ using Windows.UI.Xaml.Controls;
 using Windows.Storage; // hard to replace because of file permissions
 using SimpleEpubReader.EbookReader;
 using EpubSharp;
+using Windows.Storage.Pickers;
+using System.Net.Http;
+using System.Threading;
+using Windows.Storage.Streams;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -126,6 +131,7 @@ namespace SimpleEpubReader
 #if DEBUG
             // There are only shown in debug mode!
             uiLogTab.Visibility = Visibility.Visible;
+            uiDebugMenu.Visibility = Visibility.Visible;
 #endif
 
             await BookMarkFile.SmartReadAsync();
@@ -261,7 +267,7 @@ namespace SimpleEpubReader
                         System.Diagnostics.Debug.WriteLine($"{filename}({wd.BookId}) is {bookData.GetBestTitleForFilename()}");
                     }
                     var fullpath = folder.Path;
-                    if (fullpath.Contains(@"\source\repos\SimpleEpubReader\SimpleEpubReader\bin\x64\Debug\AppX\Assets\PreinstalledBooks"))
+                    if (fullpath.Contains(@"AppX\Assets\PreinstalledBooks"))
                     {
                         // Whoops. The initial database might incorrectly have a developer path hard-coded.
                         // Replace with correct location.
@@ -301,7 +307,7 @@ namespace SimpleEpubReader
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine($"{filename} is not an e-book");
+                    System.Diagnostics.Debug.WriteLine($"ERROR: MarkAllDownloadedFiles: {filename} is not an e-book");
                 }
             }
         }
@@ -401,6 +407,7 @@ namespace SimpleEpubReader
 
         private void OnFixupDatabase(object sender, RoutedEventArgs e)
         {
+            BookDataContext.ResetSingleton("InitialBookData.Db");
             var bookdb = BookDataContext.Get();
             var books = bookdb.Books.ToList();
             int nfix = 0;
@@ -412,6 +419,7 @@ namespace SimpleEpubReader
             }
             ;
             bookdb.SaveChanges();
+            BookDataContext.ResetSingleton(null);
         }
 
         private async void OnSetFonts(object sender, RoutedEventArgs e)
@@ -526,8 +534,26 @@ namespace SimpleEpubReader
 #endif
 
 
-#endregion
+        #endregion
 
+        private async void OnShowLocation(object sender, RoutedEventArgs e)
+        {
+            var txt = $"Path is {FolderMethods.LocalFolder}";
+            var dlg = new ContentDialog()
+            {
+                Content = new TextBlock() { Text = txt, TextWrapping = TextWrapping.Wrap, IsTextSelectionEnabled = true },
+                Title = "Current location",
+                PrimaryButtonText = "OK",
+            };
+            await dlg.ShowAsync();
+        }
+
+        /// <summary>
+        /// Dwonloads the correct set (5 as of 2021-04-04) of books to pre-populate the app with.
+        /// Would be nice to sometime include popular books as a category :-)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void OnDownloadInitialFiles(object sender, RoutedEventArgs e)
         {
             var bookdb = BookDataContext.Get();
@@ -546,6 +572,118 @@ namespace SimpleEpubReader
             BookDataContext.ResetSingleton(null); // reset database
         }
 
+        /// <summary>
+        ///  Download the latest Gutenberg catalog
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnDownloadLatestCatalog(object sender, RoutedEventArgs e)
+        {
+            var uri = GutenbergDownloadControl.CurrentGutenbergCatalogLocation; // http://www.gutenberg.org/cache/epub/feeds/rdf-files.tar.zip"
+            var picker = new FileSavePicker()
+            {
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+                SuggestedFileName = "rdf-files.tar.zip",
+                SettingsIdentifier = "NewGutengbergFile",
+            };
+            picker.FileTypeChoices.Add("Plain Text", new List<string>() { ".zip" });
+            var filepick = await picker.PickSaveFileAsync();
+            if (filepick == null) return;
+
+            int totalRead = 0;
+            System.IO.Stream stream = null;
+            var hc = new HttpClient();
+            var cts = new CancellationTokenSource();
+            var ct = cts.Token;
+            var copyError = false;
+            using (var outstream = await filepick.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                HttpResponseMessage result = null;
+                const uint mbufferSize = 1024 * 1024;
+                var mbuffer = new byte[mbufferSize];
+                try
+                {
+                    result = await hc.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, ct);
+                    stream = await result.Content.ReadAsStreamAsync();
+                    // Just having the stream means nothing; we need to read from the stream. That's
+                    // where the incoming bytes will actually be read
+                }
+                catch (Exception)
+                {
+                    copyError = true;
+                }
+
+                try
+                {
+                    bool keepGoing = !ct.IsCancellationRequested && !copyError;
+                    int tempTotalRead = 0;
+
+                    var startdlg = new ContentDialog()
+                    {
+                        Content = new TextBlock() 
+                        { 
+                            Text = $"Starting to download file now {uri.OriginalString}", 
+                            TextWrapping = TextWrapping.Wrap, 
+                            IsTextSelectionEnabled = true 
+                        },
+                        Title = "Starting catalog download",
+                        PrimaryButtonText = "OK",
+                    };
+                    await startdlg.ShowAsync();
+
+
+                    while (keepGoing)
+                    {
+                        var nread = await stream.ReadAsync(mbuffer, 0, mbuffer.Length);
+                        totalRead += nread;
+                        tempTotalRead += nread;
+                        if (nread == 0) // When we get no bytes, the stream is done.
+                        {
+                            keepGoing = false;
+                        }
+                        else
+                        {
+                            // Write out the buffer, but do it correctly.
+                            //IBuffer buffer = Windows.Security.Cryptography.CryptographicBuffer.CreateFromByteArray(mbuffer);
+                            var buffer = mbuffer.AsBuffer(0, nread); // SO MANY CONVERSIONS.
+                            await outstream.WriteAsync(buffer);
+                        }
+                        if (tempTotalRead > 1_000_000) // pause a little bit every million bytes. Otherwise the UI is impossible...
+                        {
+                            Logger.Log($"Download catalog: got {totalRead} bytes");
+                            tempTotalRead = 0;
+                        }
+                        if (ct.IsCancellationRequested)
+                        {
+                            keepGoing = false;
+                            copyError = true;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    ; // all of the actual data-reading exceptions.
+                    copyError = true;
+                }
+
+                var donedlg = new ContentDialog()
+                {
+                    Content = new TextBlock()
+                    {
+                        Text = copyError?"ERROR! ": "Download complete:" + $"size is {totalRead}",
+                        TextWrapping = TextWrapping.Wrap,
+                        IsTextSelectionEnabled = true
+                    },
+                    Title = "Catalog download complete",
+                    PrimaryButtonText = "OK",
+                };
+                await donedlg.ShowAsync();
+
+
+            }
+        }
+
+
 
         public Task DisplayBook(BookData book, BookLocation location)
         {
@@ -555,19 +693,14 @@ namespace SimpleEpubReader
             return Task.Delay(0);
         }
 
-        private void OnClearCurrentBook(object sender, RoutedEventArgs e)
-        {
-            uiReaderControl.Visibility = Visibility.Collapsed;
-            uiHelpControl.Visibility = Visibility.Visible;
-            MainEpubReader.ClearCurrReadingBook();
-        }
+
 
         private async void OnUpdateGutenberg(object sender, RoutedEventArgs e)
         {
             var dl = new GutenbergDownloadControl();
             var cd = new ContentDialog()
             {
-                Title = "Update Guteneberg Catalog",
+                Title = "Update Gutenberg Catalog",
                 Content = dl,
                 //Buttons are handled inside the dialog: PrimaryButtonText = "OK",
             };
@@ -674,5 +807,6 @@ namespace SimpleEpubReader
             foundTab.Header = header;
             if (header == null) await Task.Delay(0); // make the compiler be quiet about being async since I have to return a Task
         }
+
     }
 }

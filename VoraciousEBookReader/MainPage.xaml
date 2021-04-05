@@ -109,18 +109,27 @@
                     <AppBarButton Icon="Bookmarks" Label="Bookmark Files" >
                         <AppBarButton.Flyout>
                             <MenuFlyout>
-                                <!-- These are all programming interfaces...
-                                <MenuFlyoutItem Text="Rebuild Database" Click="OnRebuildDatabase" />
-                                <MenuFlyoutItem Text="Clear Current Book" Click="OnClearCurrentBook" />
-                                <MenuFlyoutItem Text="Download Files" Click="OnDownloadInitialFiles" />
-                                <MenuFlyoutItem Text="Create Database" Click="OnCreateDatabase" />
-                                <MenuFlyoutItem Text="Read downloaded files" Click="OnReadDownloadedFiles" />
-                                <MenuFlyoutItem Text="Fixup Database" Click="OnFixupDatabase" />
-                                -->
                                 <MenuFlyoutItem Text="Set bookmark folder" Click="OnSetUserJsonFolder" />
                                 <MenuFlyoutItem Text="Read bookmarks" Click="OnRestoreUserJson" />
                                 <MenuFlyoutItem Text="Save all bookmarks" Click="OnSaveUserAllJson" />
                                 <MenuFlyoutItem Text="Save recent bookmarks" Click="OnSaveUserJson" />
+                            </MenuFlyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+                    <AppBarButton x:Name="uiDebugMenu" Visibility="Collapsed"  Icon="Admin" Label="Programming Menu" >
+                        <AppBarButton.Flyout>
+                            <MenuFlyout>
+                                <!--
+                                <MenuFlyoutItem Text="Rebuild Database" Click="OnRebuildDatabase" />
+                                -->
+                                <MenuFlyoutItem Text="Show location" Click="OnShowLocation" />
+                                <MenuFlyoutItem Text="Download Files" Click="OnDownloadInitialFiles" />
+                                <MenuFlyoutItem Text="Download Catalog" Click="OnDownloadLatestCatalog" />
+                                <MenuFlyoutItem Text="Rebuild clean Database" Click="OnCreateDatabase" />
+                                <!-- Not needed; is handled by the CreateDatabase
+                                <MenuFlyoutItem Text="Read downloaded files" Click="OnReadDownloadedFiles" />
+                                -->
+                                <MenuFlyoutItem Text="Fixup Database" Click="OnFixupDatabase" />
                             </MenuFlyout>
                         </AppBarButton.Flyout>
                     </AppBarButton>

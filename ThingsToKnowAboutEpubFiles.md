@@ -164,6 +164,10 @@ The way this shows up is that when I look at all tags, trying to find the first 
 
 **Solution** is to find all anchor (a) tags that are self-closed and replace them with non-self-closed tags.
 
+**Except** that the Flying Girl and her Chum, in the first section only, has a \<div class="figcenter c2"/>. This is not recognized as closed, and so the rest of the section is styled as if it was an image: that is, it's got big margins. The more permanent solution was to extend the previous solution, and look for self-closed _div_ tags. 
+
+In theory I could also search for self-closed _title_ tags and solve the Mintduino issue, but I decided to punt on that for now.
+
 
 ## Some chapters have no ids?
 
@@ -228,7 +232,7 @@ strings are sometimes plain ("Chapter 4") and sometimes include a full title.
 
 **Solution** the titles are all string.Trim'd before being used.
 
-## Title tags should be well-formed
+## Title tags should not be self-closing
 
 Many EPUB HTML files include a \<title> tag. This is all well and good. 
 

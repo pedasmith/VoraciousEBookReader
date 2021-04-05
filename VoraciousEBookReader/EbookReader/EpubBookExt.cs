@@ -33,18 +33,20 @@ namespace SimpleEpubReader.EbookReader
             get
             {
                 // This is often filled in
-                var list = inner.SpecialResources.HtmlInReadingOrder;
-                if (list != null && list.Count > 0)
+                if (inner != null && inner.SpecialResources != null)
                 {
-                    return inner.SpecialResources.HtmlInReadingOrder;
+                    var list = inner.SpecialResources.HtmlInReadingOrder;
+                    if (list != null && list.Count > 0)
+                    {
+                        return inner.SpecialResources.HtmlInReadingOrder;
+                    }
                 }
 
+                // Kind of a fail -- this can only be hit if we craft an epub but then don't call the
+                // fixup.
                 if (_ResourcesHtmlOrdered == null)
                 {
-                    //FixupHtmlOrdered();
-                    // This exists, so why no use it directly rather than attempt to build
-                    // up the right list of files? (Or is that a bad mistake?)
-                    _ResourcesHtmlOrdered = inner.SpecialResources.HtmlInReadingOrder;
+                    FixupHtmlOrdered();
                 }
                 return _ResourcesHtmlOrdered;
             }

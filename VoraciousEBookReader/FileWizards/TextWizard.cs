@@ -25,6 +25,7 @@ namespace SimpleEpubReader.FileWizards
                 TextContent = fileString,
                 //FileName = "Contents.html",
                 AbsolutePath = "./Contents.html",
+                Href = "Contents.html", // why not?
                 ContentType = EpubSharp.Format.EpubContentType.Xml,
                 MimeType = "text/html",
                 Content = System.Text.Encoding.UTF8.GetBytes(fileString),

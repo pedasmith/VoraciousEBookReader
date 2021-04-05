@@ -26,7 +26,7 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0">
-                <TextBlock FontSize="30" FontWeight="Bold" TextWrapping="WrapWholeWords">Preparing dozens of FREE ebooks for first use!</TextBlock>
+                <TextBlock FontSize="30" FontWeight="Bold" TextWrapping="WrapWholeWords">Preparing FREE ebooks for first use!</TextBlock>
                 <Rectangle Height="30" />
                 <ProgressBar x:Name="uiProgress" HorizontalAlignment="Stretch" MinHeight="10" />
                 <ProgressRing x:Name="uiProgressRing" HorizontalAlignment="Left" />

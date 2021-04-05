@@ -14,6 +14,11 @@ namespace SimpleEpubReader.Database
 {
     static class RdfReader
     {
+        /// <summary>
+        /// Queries user for ZIPPED TAR'd RDF (catalog) file and stuff data into database
+        /// </summary>
+        /// <param name="bookdb"></param>
+        /// <returns></returns>
         public static async Task<int> ReadZipTarRdfFile(BookDataContext bookdb)
         {
 
@@ -21,18 +26,19 @@ namespace SimpleEpubReader.Database
             {
                 ViewMode = PickerViewMode.List,
                 SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+                SettingsIdentifier = "NewGutengbergFile",
             };
             picker.FileTypeFilter.Add(".zip");
             var filepick = await picker.PickSingleFileAsync();
             if (filepick == null) return 0;
-            var fullpath = filepick.Path;
-            var file = await PCLStorage.FileSystem.Current.GetFileFromPathAsync(fullpath);
+            //var fullpath = filepick.Path;
+            //var file = await PCLStorage.FileSystem.Current.GetFileFromPathAsync(fullpath);
             var ui = new NullIndexReader(); // don't really do anything :-)
             int retval = 0;
             await Task.Run(async () =>
             {
                 var cts = new CancellationTokenSource();
-                retval = await ReadZipTarRdfFileAsync(ui, bookdb, file, cts.Token);
+                retval = await ReadZipTarRdfFileAsync(ui, bookdb, filepick, cts.Token);
                 ;
             });
             return retval;
@@ -42,7 +48,7 @@ namespace SimpleEpubReader.Database
         public enum UpdateType { Full, Fast }
 
 
-        public static async Task<int> ReadZipTarRdfFileAsync(IndexReader ui, BookDataContext bookdb, IFile file, CancellationToken token, UpdateType updateType = UpdateType.Full)
+        public static async Task<int> ReadZipTarRdfFileAsync(IndexReader ui, BookDataContext bookdb, Windows.Storage.StorageFile file, CancellationToken token, UpdateType updateType = UpdateType.Full)
         {
             SaveAfterNFiles = SaveSkipCount;
             UiAfterNNodes = NodeReadCount;
@@ -58,9 +64,9 @@ namespace SimpleEpubReader.Database
             int nnodes = 0;
             List<BookData> newBooks = new List<BookData>();
 
-            using (var stream = await file.OpenAsync(PCLStorage.FileAccess.Read))
+            using (var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read))
             {
-                using (var reader = ReaderFactory.Open(stream))
+                using (var reader = ReaderFactory.Open(stream.AsStream()))
                 {
                     while (reader.MoveToNextEntry())
                     {
@@ -149,7 +155,6 @@ namespace SimpleEpubReader.Database
                                     }
                                 }
                             }
-
                         }
                     }
                 }
