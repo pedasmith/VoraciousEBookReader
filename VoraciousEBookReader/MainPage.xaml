@@ -108,29 +108,33 @@
                     <AppBarButton Icon="ImportAll" Label="Update Gutenberg" Click="OnUpdateGutenberg" />
                     <AppBarButton Icon="Bookmarks" Label="Bookmark Files" >
                         <AppBarButton.Flyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Text="Set bookmark folder" Click="OnSetUserJsonFolder" />
-                                <MenuFlyoutItem Text="Read bookmarks" Click="OnRestoreUserJson" />
-                                <MenuFlyoutItem Text="Save all bookmarks" Click="OnSaveUserAllJson" />
-                                <MenuFlyoutItem Text="Save recent bookmarks" Click="OnSaveUserJson" />
-                            </MenuFlyout>
+                            <CommandBarFlyout Placement="Bottom">
+                                <CommandBarFlyout.SecondaryCommands>
+                                    <AppBarButton Label="Set bookmark folder" Click="OnSetUserJsonFolder" />
+                                    <AppBarButton Label="Read bookmarks" Click="OnRestoreUserJson" />
+                                    <AppBarButton Label="Save all bookmarks" Click="OnSaveUserAllJson" />
+                                    <AppBarButton Label="Save recent bookmarks" Click="OnSaveUserJson" />
+                                </CommandBarFlyout.SecondaryCommands>
+                            </CommandBarFlyout>
                         </AppBarButton.Flyout>
                     </AppBarButton>
                     <AppBarButton x:Name="uiDebugMenu" Visibility="Collapsed"  Icon="Admin" Label="Programming Menu" >
                         <AppBarButton.Flyout>
-                            <MenuFlyout>
-                                <!--
-                                <MenuFlyoutItem Text="Rebuild Database" Click="OnRebuildDatabase" />
-                                -->
-                                <MenuFlyoutItem Text="Show location" Click="OnShowLocation" />
-                                <MenuFlyoutItem Text="Download Files" Click="OnDownloadInitialFiles" />
-                                <MenuFlyoutItem Text="Download Catalog" Click="OnDownloadLatestCatalog" />
-                                <MenuFlyoutItem Text="Rebuild clean Database" Click="OnCreateDatabase" />
-                                <!-- Not needed; is handled by the CreateDatabase
-                                <MenuFlyoutItem Text="Read downloaded files" Click="OnReadDownloadedFiles" />
-                                -->
-                                <MenuFlyoutItem Text="Fixup Database" Click="OnFixupDatabase" />
-                            </MenuFlyout>
+                            <CommandBarFlyout Placement="Bottom">
+                                <CommandBarFlyout.SecondaryCommands>
+                                    <!--
+                                    <AppBarButton Label="Rebuild Database" Click="OnRebuildDatabase" />
+                                    -->
+                                    <AppBarButton Label="Show location" Click="OnShowLocation" />
+                                    <AppBarButton Label="Download Files" Click="OnDownloadInitialFiles" />
+                                    <AppBarButton Label="Download Catalog" Click="OnDownloadLatestCatalog" />
+                                    <AppBarButton Label="Rebuild clean Database" Click="OnCreateDatabase" />
+                                    <!-- Not needed; is handled by the CreateDatabase
+                                    <AppBarButton Label="Read downloaded files" Click="OnReadDownloadedFiles" />
+                                    -->
+                                    <AppBarButton Label="Fixup Database" Click="OnFixupDatabase" />
+                                </CommandBarFlyout.SecondaryCommands>
+                            </CommandBarFlyout>
                         </AppBarButton.Flyout>
                     </AppBarButton>
                 </CommandBar.SecondaryCommands>
