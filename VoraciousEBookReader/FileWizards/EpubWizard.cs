@@ -177,9 +177,12 @@ namespace SimpleEpubReader.FileWizards
                                 }
                             }
                             continue;
+                        case "ss":
+                            // Part of class="id" -- is seen in e.g. Fireless Locomotive
+                            break;
                         default:
                             App.Error($"ERROR in HtmlStringContainsId at index {eqIndex} expected id or (s)rc not {partial} ");
-                            continue;
+                            break;
                     }
                 }
             }

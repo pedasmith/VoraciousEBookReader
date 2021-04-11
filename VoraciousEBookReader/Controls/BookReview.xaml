@@ -7,8 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="300"
+    d:DesignHeight="600"
     d:DesignWidth="400">
+    <!--
+    
+    NOT USED! The primary Review is a combined ReviewNoteStatus control.
+    Why? Because the original UI split reviewing, setting status, and the notes.
+    But that was frankly awkward and difficult to describe. So now it's one combo UI.
+    
+    -->
 
     <Grid>
         <Grid.RowDefinitions>

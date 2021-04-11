@@ -30,6 +30,7 @@ namespace SimpleEpubReader.Controls
 
             // // // TODO: actually save note.... uiNotes.SaveNote(); //
             uiNoteEditor.SaveNoteIfNeeded(Navigator.NavigateControlId.MainReader, bookdb);
+
         }
 
         UserNote PotentialNote = null;

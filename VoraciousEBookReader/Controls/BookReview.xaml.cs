@@ -7,7 +7,11 @@ using Windows.UI.Xaml.Controls;
 namespace SimpleEpubReader.Controls
 {
     /// <summary>
-    /// The DataContext is a BookData object
+    /// The DataContext is a BookData object.
+    /// NOT USED! The primary Review is a combined ReviewNoteStatus control.
+    /// Why? Because the original UI split reviewing, setting status, and the notes.
+    /// But that was frankly awkward and difficult to describe. So now it's one combo UI.
+
     /// </summary>
     public sealed partial class BookReview : UserControl
     {
