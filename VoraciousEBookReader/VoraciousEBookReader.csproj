@@ -169,9 +169,6 @@
       <DependentUpon>BookCard.xaml</DependentUpon>
     </Compile>
     <Compile Include="EbookReader\BookLocation.cs" />
-    <Compile Include="Controls\BookReview.xaml.cs">
-      <DependentUpon>BookReview.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\BookSearch.xaml.cs">
       <DependentUpon>BookSearch.xaml</DependentUpon>
     </Compile>
@@ -205,16 +202,13 @@
     </Compile>
     <Compile Include="Controls\PersonCard.xaml.cs">
       <DependentUpon>PersonCard.xaml</DependentUpon>
-    </Compile>
+    </Compile>	
     <Compile Include="Controls\PickLanguageControl.xaml.cs">
       <DependentUpon>PickLanguageControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ProjectRomeActivity.cs" />
     <Compile Include="Controls\ReviewNoteStatusControl.xaml.cs">
       <DependentUpon>ReviewNoteStatusControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\UserReviewsAndNotes.xaml.cs">
-      <DependentUpon>UserReviewsAndNotes.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\WebSearch.xaml.cs">
       <DependentUpon>WebSearch.xaml</DependentUpon>
@@ -450,10 +444,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\BookReview.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\BookSearch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -503,10 +493,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ReviewNoteStatusControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\UserReviewsAndNotes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
