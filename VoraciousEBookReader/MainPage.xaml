@@ -108,47 +108,41 @@
                     <AppBarButton Icon="ImportAll" Label="Update Gutenberg ..." Click="OnUpdateGutenberg" />
                     <AppBarButton Icon="Bookmarks" Label="Bookmark Files" >
                         <AppBarButton.Flyout>
-                            <CommandBarFlyout Placement="Bottom">
-                                <CommandBarFlyout.SecondaryCommands>
-                                    <AppBarButton Label="Set bookmark folder" Click="OnSetUserJsonFolder" />
-                                    <AppBarButton Label="Read bookmarks" Click="OnRestoreUserJson" />
-                                    <AppBarButton Label="Save all bookmarks" Click="OnSaveUserAllJson" />
-                                    <AppBarButton Label="Save recent bookmarks" Click="OnSaveUserJson" />
-                                </CommandBarFlyout.SecondaryCommands>
-                            </CommandBarFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="Set bookmark folder" Click="OnSetUserJsonFolder" />
+                                <MenuFlyoutItem Text="Read bookmarks" Click="OnRestoreUserJson" />
+                                <MenuFlyoutItem Text="Save all bookmarks" Click="OnSaveUserAllJson" />
+                                <MenuFlyoutItem Text="Save recent bookmarks" Click="OnSaveUserJson" />
+                            </MenuFlyout>
                         </AppBarButton.Flyout>
                     </AppBarButton>
                     <AppBarButton Icon="CellPhone" Label="Manage eBook Reader" >
                         <AppBarButton.Flyout>
-                            <CommandBarFlyout Placement="Bottom">
-                                <CommandBarFlyout.SecondaryCommands>
-                                    <AppBarButton Label="Set eBook Reader folder" Icon="Folder" Click="OnEbookReaderSetFolder" />
-                                    <AppBarButton Label="Send to eBook Reader" Icon="Download" Click="OnEbookReaderSendTo" />
-                                    <AppBarButton Label="Mark as read: eBook Reader" Icon="Accept" Click="OnEbookReaderMarkRead" />
-                                    <AppBarButton Label="Mark as downloaded: eBook Reader" Icon="Import" Click="OnEbookReaderMarkDownloaded" />
-                                    <AppBarButton Label="Open eBook Reader's Folder" Icon="OpenLocal" Click="OnEbookReaderOpenFolder" />
-                                    <AppBarButton Label="Help with eBook Readers" Icon="Help" Click="OnEbookReaderHelp" />
-                                </CommandBarFlyout.SecondaryCommands>
-                            </CommandBarFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="Set eBook Reader folder" Click="OnEbookReaderSetFolder" />
+                                <MenuFlyoutItem Text="Send to eBook Reader" Icon="Download" Click="OnEbookReaderSendTo" />
+                                <MenuFlyoutItem Text="Mark as read: eBook Reader" Icon="Accept" Click="OnEbookReaderMarkRead" />
+                                <MenuFlyoutItem Text="Mark as downloaded: eBook Reader" Icon="Import" Click="OnEbookReaderMarkDownloaded" />
+                                <MenuFlyoutItem Text="Open eBook Reader's Folder" Click="OnEbookReaderOpenFolder" />
+                                <MenuFlyoutItem Text="Help with eBook Readers" Icon="Help" Click="OnEbookReaderHelp" />
+                            </MenuFlyout>
                         </AppBarButton.Flyout>
                     </AppBarButton>
                     <AppBarButton x:Name="uiDebugMenu" Visibility="Collapsed"  Icon="Admin" Label="Programming Menu" >
                         <AppBarButton.Flyout>
-                            <CommandBarFlyout Placement="Bottom">
-                                <CommandBarFlyout.SecondaryCommands>
-                                    <!--
-                                    <AppBarButton Label="Rebuild Database" Click="OnRebuildDatabase" />
-                                    -->
-                                    <AppBarButton Label="Show location" Click="OnShowLocation" />
-                                    <AppBarButton Label="Download Files" Click="OnDownloadInitialFiles" />
-                                    <AppBarButton Label="Download Catalog" Click="OnDownloadLatestCatalog" />
-                                    <AppBarButton Label="Rebuild clean Database" Click="OnCreateDatabase" />
-                                    <!-- Not needed; is handled by the CreateDatabase
-                                    <AppBarButton Label="Read downloaded files" Click="OnReadDownloadedFiles" />
-                                    -->
-                                    <AppBarButton Label="Fixup Database" Click="OnFixupDatabase" />
-                                </CommandBarFlyout.SecondaryCommands>
-                            </CommandBarFlyout>
+                            <MenuFlyout>
+                                <!--
+                                <AppBarButton Label="Rebuild Database" Click="OnRebuildDatabase" />
+                                -->
+                                <MenuFlyoutItem Text="Show location" Click="OnShowLocation" />
+                                <MenuFlyoutItem Text="Download Files" Click="OnDownloadInitialFiles" />
+                                <MenuFlyoutItem Text="Download Catalog" Click="OnDownloadLatestCatalog" />
+                                <MenuFlyoutItem Text="Rebuild clean Database" Click="OnCreateDatabase" />
+                                <!-- Not needed; is handled by the CreateDatabase
+                                <AppBarButton Label="Read downloaded files" Click="OnReadDownloadedFiles" />
+                                -->
+                                <MenuFlyoutItem Text="Fixup Database" Click="OnFixupDatabase" />
+                            </MenuFlyout>
                         </AppBarButton.Flyout>
                     </AppBarButton>
                 </CommandBar.SecondaryCommands>
