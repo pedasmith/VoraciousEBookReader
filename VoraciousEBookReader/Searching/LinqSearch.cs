@@ -26,7 +26,7 @@ namespace SimpleEpubReader.Searching
         /// 
         /// </summary>
         /// <param name="bookdb"></param>
-        /// <param name="searchScope">One of Catalog, Pick, Reading, Downloaded, Finished</param>
+        /// <param name="searchScope">One of Catalog, Pick, Reading, Downloaded, Finished, CopiedToEBookReader</param>
         /// <param name="search">search query like title:voyage sea</param>
         /// <param name="language">en or *</param>
         /// <param name="sortBy">One of author, title, date_download_asc, date_download_desc</param>
@@ -92,6 +92,7 @@ namespace SimpleEpubReader.Searching
                 case "Reading":
                 case "Downloaded":
                 case "Finished":
+                case "CopiedToEBookReader":
                     includes |= LinqIncludes.NavigationData | LinqIncludes.UserData | LinqIncludes.People; // includes download
                     break;
             }
@@ -152,6 +153,13 @@ namespace SimpleEpubReader.Searching
                     // Matchlist used to also insist that the book be downloaded. But in reality, I might 
                     // finish a book on computer "A" and then want to see that it's finished on computer "B"
                     //.Where(b => b.DownloadData != null) 
+                    break;
+                case "CopiedToEBookReader":
+                    matchList = queryList
+                        .Where(b => b.NavigationData != null)
+                        .Where(b => b.NavigationData.NSwipeLeft < 1)
+                        .Where(b => b.NavigationData.CurrStatus == BookNavigationData.UserStatus.CopiedToEBookReader)
+                        ;
                     break;
             }
             // Add in sorting

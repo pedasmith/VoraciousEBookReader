@@ -21,6 +21,7 @@ using System.Net.Http;
 using System.Threading;
 using Windows.Storage.Streams;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.UI.Xaml.Media;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -807,6 +808,82 @@ namespace SimpleEpubReader
             foundTab.Header = header;
             if (header == null) await Task.Delay(0); // make the compiler be quiet about being async since I have to return a Task
         }
+        /// <summary>
+        /// Pop up dialog to let user pick what books to download to e-Book Reader
+        /// </summary>
 
+        private async void OnEbookReaderSendTo(object sender, RoutedEventArgs e)
+        {
+            // Dismiss the menu
+            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+            foreach (var popup in popups)
+            {
+                popup.IsOpen = false;
+            }
+            var content = new EBookReaderPickAndDownload();
+            var dlg = new ContentDialog()
+            {
+                Title = "Download book to an eBook Reader",
+                Content = content,
+            };
+            await dlg.ShowAsync();
+        }
+
+        /// <summary>
+        /// TODO: Open the folder that is the E-Book Reader
+        /// </summary>
+        private void OnEbookReaderOpenFolder(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
+        /// <summary>
+        /// TODO: Mark all eBookReader books as Read
+        /// </summary>
+        private async void OnEbookReaderMarkRead(object sender, RoutedEventArgs e)
+        {
+            // Dismiss the menu
+            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+            foreach (var popup in popups)
+            {
+                popup.IsOpen = false;
+            }
+            var content = new EBookReaderMark(BookNavigationData.UserStatus.Done);
+            var dlg = new ContentDialog()
+            {
+                Title = "Mark books sent to eBook Reader as read",
+                Content = content,
+            };
+            await dlg.ShowAsync();
+        }
+
+        /// <summary>
+        /// TODO: Mark all eBookReader books as Downloaded
+        /// </summary>
+        private async void OnEbookReaderMarkDownloaded(object sender, RoutedEventArgs e)
+        {
+            // Dismiss the menu
+            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+            foreach (var popup in popups)
+            {
+                popup.IsOpen = false;
+            }
+            var content = new EBookReaderMark(BookNavigationData.UserStatus.NoStatus);
+            var dlg = new ContentDialog()
+            {
+                Title = "Mark books sent to eBook Reader as downlaoded",
+                Content = content,
+            };
+            await dlg.ShowAsync();
+        }
+
+        /// <summary>
+        /// TODO: Shows help for using eBook Readers with Voracious EBOOK Reader
+        /// </summary>
+        private void OnEbookReaderHelp(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

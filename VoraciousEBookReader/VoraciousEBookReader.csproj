@@ -168,6 +168,12 @@
     <Compile Include="Controls\BookCard.xaml.cs">
       <DependentUpon>BookCard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\EBookReaderMark.xaml.cs">
+      <DependentUpon>EBookReaderMark.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\EBookReaderPickAndDownload.xaml.cs">
+      <DependentUpon>EBookReaderPickAndDownload.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EbookReader\BookLocation.cs" />
     <Compile Include="Controls\BookSearch.xaml.cs">
       <DependentUpon>BookSearch.xaml</DependentUpon>
@@ -202,7 +208,7 @@
     </Compile>
     <Compile Include="Controls\PersonCard.xaml.cs">
       <DependentUpon>PersonCard.xaml</DependentUpon>
-    </Compile>	
+    </Compile>
     <Compile Include="Controls\PickLanguageControl.xaml.cs">
       <DependentUpon>PickLanguageControl.xaml</DependentUpon>
     </Compile>
@@ -453,6 +459,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\CustomizeControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\EBookReaderMark.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\EBookReaderPickAndDownload.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

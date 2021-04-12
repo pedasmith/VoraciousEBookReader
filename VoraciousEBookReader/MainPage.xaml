@@ -105,7 +105,7 @@
                 </CommandBar.PrimaryCommands>
 
                 <CommandBar.SecondaryCommands>
-                    <AppBarButton Icon="ImportAll" Label="Update Gutenberg" Click="OnUpdateGutenberg" />
+                    <AppBarButton Icon="ImportAll" Label="Update Gutenberg ..." Click="OnUpdateGutenberg" />
                     <AppBarButton Icon="Bookmarks" Label="Bookmark Files" >
                         <AppBarButton.Flyout>
                             <CommandBarFlyout Placement="Bottom">
@@ -114,6 +114,19 @@
                                     <AppBarButton Label="Read bookmarks" Click="OnRestoreUserJson" />
                                     <AppBarButton Label="Save all bookmarks" Click="OnSaveUserAllJson" />
                                     <AppBarButton Label="Save recent bookmarks" Click="OnSaveUserJson" />
+                                </CommandBarFlyout.SecondaryCommands>
+                            </CommandBarFlyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+                    <AppBarButton Icon="CellPhone" Label="Manage eBook Reader" >
+                        <AppBarButton.Flyout>
+                            <CommandBarFlyout Placement="Bottom">
+                                <CommandBarFlyout.SecondaryCommands>
+                                    <AppBarButton Label="Send to eBook Reader" Icon="Download" Click="OnEbookReaderSendTo" />
+                                    <AppBarButton Label="Mark as read: eBook Reader" Icon="Accept" Click="OnEbookReaderMarkRead" />
+                                    <AppBarButton Label="Mark as downloaded: eBook Reader" Icon="Import" Click="OnEbookReaderMarkDownloaded" />
+                                    <AppBarButton Label="Open eBook Reader" Icon="Folder" Click="OnEbookReaderOpenFolder" />
+                                    <AppBarButton Label="Help with eBook Readers" Icon="Help" Click="OnEbookReaderHelp" />
                                 </CommandBarFlyout.SecondaryCommands>
                             </CommandBarFlyout>
                         </AppBarButton.Flyout>

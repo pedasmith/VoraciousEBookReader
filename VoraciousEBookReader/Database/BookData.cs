@@ -667,7 +667,7 @@ namespace SimpleEpubReader.Database
         public string Title { get => title; set { if (title != value) { NotifyPropertyChanging(); title = value; NotifyPropertyChanged(); } } }
 
         /// <summary>
-        /// Ued when there is already a title
+        /// Used when there is already a title
         /// <dcterms:alternative>Alice in Wonderland</dcterms:alternative>
         /// </summary>
         public string TitleAlternative { get => titleAlternative; set { if (titleAlternative != value) { NotifyPropertyChanging(); titleAlternative = value; NotifyPropertyChanged(); } } }

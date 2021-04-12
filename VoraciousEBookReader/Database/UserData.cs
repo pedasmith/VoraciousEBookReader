@@ -312,11 +312,19 @@ namespace SimpleEpubReader.Database
         public int Id { get => id; set { if (id != value) { NotifyPropertyChanging(); id = value; NotifyPropertyChanged(); } } }
 
         public string BookId { get => bookId; set { if (bookId != value) { NotifyPropertyChanging(); bookId = value; NotifyPropertyChanged(); } } }
+        /// <summary>
+        /// Path to the folder containing the file but not the FileName itself. See also FullFilePath.
+        /// </summary>
         public string FilePath { get => filePath; set { if (filePath != value) { NotifyPropertyChanging(); filePath = value; NotifyPropertyChanged(); } } }
-        // is full path to the book not including the name
-        public string FileName { get => fileName; set { if (fileName != value) { NotifyPropertyChanging(); fileName = value; NotifyPropertyChanged(); } } }
-        // just the name of the file
 
+        /// <summary>
+        /// Just the name of the file
+        /// </summary>
+        public string FileName { get => fileName; set { if (fileName != value) { NotifyPropertyChanging(); fileName = value; NotifyPropertyChanged(); } } }
+
+        /// <summary>
+        /// FilePath + FileName combined
+        /// </summary>
         public string FullFilePath { get { return $"{FilePath}\\{FileName}"; } }
         public FileStatus CurrFileStatus { get => currFileStatus; set { if (currFileStatus != value) { NotifyPropertyChanging(); currFileStatus = value; NotifyPropertyChanged(); } } }
         public DateTimeOffset DownloadDate { get => downloadDate; set { if (downloadDate != value) { NotifyPropertyChanging(); downloadDate = value; NotifyPropertyChanged(); } } }
@@ -370,7 +378,7 @@ namespace SimpleEpubReader.Database
 
         public string CurrSpot { get => currSpot; set { if (currSpot != value) { NotifyPropertyChanging(); currSpot = value; Touch();  NotifyPropertyChanged(); } } }
         // is magically set by the reader
-        public enum UserStatus { NoStatus, Reading, Done, Abandoned };
+        public enum UserStatus { NoStatus, Reading, Done, Abandoned, CopiedToEBookReader };
 
         public UserStatus CurrStatus { get => currStatus; set { if (currStatus != value) { NotifyPropertyChanging(); currStatus = value; Touch(); NotifyPropertyChanged(); } } }
         public bool IsDone { get { return CurrStatus == UserStatus.Done || CurrStatus == UserStatus.Abandoned; } }
