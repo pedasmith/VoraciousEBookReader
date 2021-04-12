@@ -168,6 +168,7 @@
     <Compile Include="Controls\BookCard.xaml.cs">
       <DependentUpon>BookCard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\EBookFolder.cs" />
     <Compile Include="Controls\EBookReaderMark.xaml.cs">
       <DependentUpon>EBookReaderMark.xaml</DependentUpon>
     </Compile>

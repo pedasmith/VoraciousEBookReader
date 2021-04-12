@@ -832,9 +832,9 @@ namespace SimpleEpubReader
         /// <summary>
         /// TODO: Open the folder that is the E-Book Reader
         /// </summary>
-        private void OnEbookReaderOpenFolder(object sender, RoutedEventArgs e)
+        private async void OnEbookReaderOpenFolder(object sender, RoutedEventArgs e)
         {
-
+            await EBookFolder.LaunchExplorerAtFolderAsync();
         }
 
 
@@ -884,6 +884,16 @@ namespace SimpleEpubReader
         private void OnEbookReaderHelp(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        /// <summary>
+        /// TODO: set the folder
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void OnEbookReaderSetFolder(object sender, RoutedEventArgs e)
+        {
+            await EBookFolder.PickFolderAsync();
         }
     }
 }

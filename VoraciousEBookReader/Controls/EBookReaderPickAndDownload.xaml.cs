@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -16,7 +17,6 @@ namespace SimpleEpubReader.Controls
 {
     public sealed partial class EBookReaderPickAndDownload : UserControl
     {
-        public const string EBOOKREADERFOLDERFILETOKEN = "EBOOKREADER_FOLDER";
         public ObservableCollection<BookData> Books { get; } = new ObservableCollection<BookData>();
         public EBookReaderPickAndDownload()
         {
@@ -25,9 +25,14 @@ namespace SimpleEpubReader.Controls
             this.Loaded += EBookReaderPickAndDownload_Loaded;
         }
 
-        private void EBookReaderPickAndDownload_Loaded(object sender, RoutedEventArgs e)
+        private async void EBookReaderPickAndDownload_Loaded(object sender, RoutedEventArgs e)
         {
-            //await UpdateList();
+            StorageFolder folder = await EBookFolder.GetFolderSilentAsync();
+            if (folder != null)
+            {
+                uiUserSaveFolderNote.Visibility = Visibility.Visible;
+                uiSaveFolderName.Text = folder.Path;
+            }
         }
 
         private IList<BookData> GetSelectedBooks()
@@ -114,16 +119,11 @@ namespace SimpleEpubReader.Controls
 
             var bookdb = BookDataContext.Get();
             var selectedBooks = GetSelectedBooks();
-            StorageFolder folder = null;
-            var picker = new FolderPicker()
+            StorageFolder folder = await EBookFolder.GetFolderSilentAsync();
+            if (folder == null)
             {
-                CommitButtonText = "Pick eBook Reader folder",
-                ViewMode = PickerViewMode.List,
-                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
-                SettingsIdentifier = EBOOKREADERFOLDERFILETOKEN,
-            };
-            picker.FileTypeFilter.Add("*");
-            folder = await picker.PickSingleFolderAsync();
+                folder = await EBookFolder.PickFolderAsync();
+            }
             if (folder != null)
             {
                 foreach (var bookData in selectedBooks)
