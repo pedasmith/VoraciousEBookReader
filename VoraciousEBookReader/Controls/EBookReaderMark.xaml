@@ -7,9 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="500">
 
-    <Grid>
+    <Grid MinWidth="500" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -22,15 +22,33 @@
             <CheckBox Content="Select all" IsChecked="True" Checked="OnSelectAllCheck" Unchecked="OnSelectAllUnchecked" />
             <Line Width="2" X1="1" X2="400" Stroke="Black" HorizontalAlignment="Left"/>
         </StackPanel>
-        <ListView x:Name="uiBookList" Grid.Row="2" ItemsSource="{Binding Books}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <CheckBox Content="{Binding Title}" IsChecked="True"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        <StackPanel Grid.Row="3" Orientation="Horizontal">
-            <Button Content="Mark" Click="OnMark" />
-            <Button Content="Cancel" Click="OnCancel" />
-        </StackPanel>    </Grid>
+        <Grid Grid.Row="2" VerticalAlignment="Stretch">
+            <ListView x:Name="uiBookList" ItemsSource="{Binding Books}" VerticalAlignment="Stretch">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox Content="{Binding Title}" IsChecked="True" MaxWidth="480"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Grid x:Name="uiAlternateContent" Visibility="Collapsed" VerticalAlignment="Stretch" />
+        </Grid>
+        <StackPanel Grid.Row="3">
+            <StackPanel Orientation="Horizontal">
+                <ComboBox x:Name="uiDoWhat" SelectedIndex="0" MinWidth="300">
+                    <ComboBoxItem Content="✔📕 Finished (Read)" Tag="MarkAsFinishedRead" />
+                    <ComboBoxItem Content="❌ Abandoned" Tag="MarkAsAbandoned" />
+                    <ComboBoxItem Content="Reading in Voracious eBook Reader" Tag="MarkAsReading" />
+                    <ComboBoxItem Content="Downloaded" Tag="MarkAsDownloaded" />
+                    <ComboBoxItem Content="No change" Tag="MakeNoChange" />
+                    <ComboBoxItem Content="📑 Review and mark each book" Tag="ReviewEachBook" />
+                </ComboBox>
+                <CheckBox x:Name="uiDeleteFromReader" Content="Delete from eBook Reader" IsChecked="false" />
+
+            </StackPanel>
+            <StackPanel  Orientation="Horizontal">
+                <Button Content="Mark" Click="OnMark" />
+                <Button Content="Cancel" Click="OnCancel" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
 </UserControl>

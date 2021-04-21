@@ -119,10 +119,10 @@
                     <AppBarButton Icon="CellPhone" Label="Manage eBook Reader" >
                         <AppBarButton.Flyout>
                             <MenuFlyout>
-                                <MenuFlyoutItem Text="Set eBook Reader folder" Click="OnEbookReaderSetFolder" />
                                 <MenuFlyoutItem Text="Send to eBook Reader" Icon="Download" Click="OnEbookReaderSendTo" />
-                                <MenuFlyoutItem Text="Mark as read: eBook Reader" Icon="Accept" Click="OnEbookReaderMarkRead" />
-                                <MenuFlyoutItem Text="Mark as downloaded: eBook Reader" Icon="Import" Click="OnEbookReaderMarkDownloaded" />
+                                <MenuFlyoutItem Text="Mark eBook Reader books" Icon="Accept" Click="OnEbookReaderMark" />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem Text="Set eBook Reader folder" Click="OnEbookReaderSetFolder" />
                                 <MenuFlyoutItem Text="Open eBook Reader's Folder" Click="OnEbookReaderOpenFolder" />
                                 <MenuFlyoutItem Text="Help with eBook Readers" Icon="Help" Click="OnEbookReaderHelp" />
                             </MenuFlyout>

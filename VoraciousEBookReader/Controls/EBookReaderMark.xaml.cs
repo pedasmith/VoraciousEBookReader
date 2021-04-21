@@ -115,34 +115,136 @@ namespace SimpleEpubReader.Controls
             }
         }
 
+        enum MarkCommandType {  ChangeStatus, NoChange, ReviewEachBook };
+
+        private MarkCommandType GetCommandType()
+        {
+            var cmd = (uiDoWhat?.SelectedItem as FrameworkElement)?.Tag as string;
+            switch (cmd)
+            {
+                case "MarkAsFinishedRead":
+                case "MarkAsAbandoned": 
+                case "MarkAsDownloaded":
+                case "MarkAsReading": return MarkCommandType.ChangeStatus;
+
+                case "MakeNoChange": return MarkCommandType.NoChange;
+                case "ReviewEachBook": return MarkCommandType.ReviewEachBook;
+                default:
+                    Logger.Log($"ERROR: unknown MarkCommandType {cmd}");
+                    return MarkCommandType.NoChange;
+            }
+        }
+        private BookNavigationData.UserStatus GetUserStatus()
+        {
+            var cmd = (uiDoWhat?.SelectedItem as FrameworkElement)?.Tag as string;
+            switch (cmd)
+            {
+                case "MarkAsFinishedRead": return BookNavigationData.UserStatus.Done;
+                case "MarkAsAbandoned": return BookNavigationData.UserStatus.Abandoned;
+                case "MarkAsDownloaded": return BookNavigationData.UserStatus.NoStatus;
+                case "MarkAsReading": return BookNavigationData.UserStatus.Reading;
+
+                default:
+                    Logger.Log($"ERROR: unknown GetUserStatus {cmd}");
+                    return BookNavigationData.UserStatus.NoStatus;
+            }
+        }
+
 
         private void OnMark(object sender, RoutedEventArgs e)
         {
             int nok = 0;
+            var newStatus = NewStatus;
+            MarkCommandType mark = GetCommandType();
+            if (mark == MarkCommandType.ChangeStatus)
+            {
+                newStatus = GetUserStatus();
+            }
+            var deleteBook = uiDeleteFromReader.IsChecked.Value;
 
             var bookdb = BookDataContext.Get();
             var selectedBooks = GetSelectedBooks();
-            foreach (var bookData in selectedBooks)
+            switch (mark)
             {
-                var srcfullname = bookData.DownloadData.FullFilePath;
-                var fname = bookData.DownloadData.FileName;
-                Logger.Log($"MARK: setting {fname} to {NewStatus}");
-                var nd = CommonQueries.BookNavigationDataEnsure(bookdb, bookData);
-                nd.CurrStatus = NewStatus;
-                nok++;
+                case MarkCommandType.ChangeStatus:
+                    foreach (var bookData in selectedBooks)
+                    {
+                        var srcfullname = bookData.DownloadData.FullFilePath;
+                        var fname = bookData.DownloadData.FileName;
+                        Logger.Log($"MARK: setting {fname} to {NewStatus}");
+                        var nd = CommonQueries.BookNavigationDataEnsure(bookdb, bookData);
+                        nd.CurrStatus = newStatus;
+                        if (deleteBook)
+                        {
+                            // TODO: How to delete it?
+                            ;
+                        }
+                        nok++;
+                    }
+                    break;
+                case MarkCommandType.NoChange:
+                    break;
+                case MarkCommandType.ReviewEachBook:
+                    SavedSelectedBooks = selectedBooks;
+                    SavedDeleteBook = deleteBook;
+                    break;
             }
-
-            Logger.Log($"COPY: OK={nok}");
 
             if (nok > 0)
             {
                 CommonQueries.BookSaveChanges(bookdb);
             }
+            Logger.Log($"COPY: OK={nok}");
 
             // End by closing the dialog box.
             var parent = this.Parent as ContentDialog;
             parent.Hide();
         }
 
+
+        IList<BookData> SavedSelectedBooks = null;
+        Boolean SavedDeleteBook = false;
+
+        public async Task RunSavedReviewEachBook()
+        {
+            if (SavedSelectedBooks == null) return;
+            var selectedBooks = SavedSelectedBooks;
+            var deleteBook = SavedDeleteBook;
+
+            var bookdb = BookDataContext.Get();
+            foreach (var bookData in selectedBooks)
+            {
+                var srcfullname = bookData.DownloadData.FullFilePath;
+                var fname = bookData.DownloadData.FileName;
+                var nd = CommonQueries.BookNavigationDataEnsure(bookdb, bookData);
+                var sh = new ContentDialog()
+                {
+                    Title = "Review Book",
+                    PrimaryButtonText = "OK",
+                    SecondaryButtonText = "Cancel",
+                };
+                // Old style: var review = new BookReview(); // This is the edit control, not the UserReview data
+                var review = new ReviewNoteStatusControl(); // This is the edit control, not the UserReview data
+                string defaultReviewText = null;
+                var BookData = bookData;
+
+                review.SetBookData(BookData, defaultReviewText);
+                sh.Content = review;
+                var result = await sh.ShowAsync();
+                switch (result)
+                {
+                    case ContentDialogResult.Primary:
+                        review.SaveData();
+                        var nav = Navigator.Get();
+                        //TODO: setup Rome?? nav.UpdateProjectRome(ControlId, GetCurrBookLocation());
+                        break;
+                }
+                if (deleteBook)
+                {
+                    // How to delete it?
+                    ;
+                }
+            }
+        }
     }
 }

@@ -841,7 +841,7 @@ namespace SimpleEpubReader
         /// <summary>
         /// TODO: Mark all eBookReader books as Read
         /// </summary>
-        private async void OnEbookReaderMarkRead(object sender, RoutedEventArgs e)
+        private async void OnEbookReaderMark(object sender, RoutedEventArgs e)
         {
             // Dismiss the menu
             var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
@@ -854,29 +854,13 @@ namespace SimpleEpubReader
             {
                 Title = "Mark books sent to eBook Reader as read",
                 Content = content,
+                // Buttons are part of the content, not here. This is opposite from how the review page works.
             };
             await dlg.ShowAsync();
+            await content.RunSavedReviewEachBook();
         }
 
-        /// <summary>
-        /// TODO: Mark all eBookReader books as Downloaded
-        /// </summary>
-        private async void OnEbookReaderMarkDownloaded(object sender, RoutedEventArgs e)
-        {
-            // Dismiss the menu
-            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
-            foreach (var popup in popups)
-            {
-                popup.IsOpen = false;
-            }
-            var content = new EBookReaderMark(BookNavigationData.UserStatus.NoStatus);
-            var dlg = new ContentDialog()
-            {
-                Title = "Mark books sent to eBook Reader as downlaoded",
-                Content = content,
-            };
-            await dlg.ShowAsync();
-        }
+
 
         /// <summary>
         /// TODO: Shows help for using eBook Readers with Voracious EBOOK Reader
