@@ -1,4 +1,5 @@
-﻿using SimpleEpubReader.Database;
+﻿using Microsoft.Toolkit.Uwp.Helpers;
+using SimpleEpubReader.Database;
 using SimpleEpubReader.Searching;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -35,6 +38,8 @@ namespace SimpleEpubReader.Controls
 
         private async void EBookReaderMark_Loaded(object sender, RoutedEventArgs e)
         {
+            // Make sure it's not visible
+            uiAlternateContent.Visibility = Visibility.Collapsed;
             await UpdateList();
         }
 
@@ -150,8 +155,56 @@ namespace SimpleEpubReader.Controls
             }
         }
 
+        StorageFolder ProgressFolder = null;
+        private async Task SetupProgressFolderAsync()
+        {
+            StorageFolder ProgressFolder = await EBookFolder.GetFolderSilentAsync();
+            if (ProgressFolder == null)
+            {
+                ProgressFolder = await EBookFolder.PickFolderAsync();
+            }
+        }
+        private async Task<bool> DeleteDownloadedBookAsync(IProgressReader progress, BookData bookData)
+        {
 
-        private void OnMark(object sender, RoutedEventArgs e)
+            if (ProgressFolder == null)
+            {
+                progress.AddLog("NOTE: no folder selected to save to");
+                return false;
+            }
+
+            var fname = bookData.DownloadData.FileName;
+            progress.SetCurrentBook(fname);
+            try
+            {
+                var exists = await ProgressFolder.FileExistsAsync(fname);
+                if (!exists)
+                {
+                    progress.AddLog($"NOTE: file {fname} is already not present.\n");
+                    return false;
+                }
+                var file = await ProgressFolder.GetFileAsync(fname);
+                if (file == null)
+                {
+                    progress.AddLog ($"NOTE: file {fname} was supposed to be present, but is not.\n");
+                    return false;
+                }
+
+                await file.DeleteAsync();
+            }
+            catch (Exception ex)
+            {
+                var log = $"ERROR: exception thrown when deleting file {fname} exception {ex.Message}\n";
+                Logger.Log(log);
+                progress.AddLog(log);
+                return false;
+            }
+
+            return true;
+        }
+
+
+        private async void OnMark(object sender, RoutedEventArgs e)
         {
             int nok = 0;
             var newStatus = NewStatus;
@@ -164,6 +217,19 @@ namespace SimpleEpubReader.Controls
 
             var bookdb = BookDataContext.Get();
             var selectedBooks = GetSelectedBooks();
+
+            // Setup to delete all selected books from the Nook
+            EbookReaderProgressControl progress = null;
+            if (deleteBook && mark != MarkCommandType.ReviewEachBook) // ReviewEachBook does this itself.
+            {
+                await SetupProgressFolderAsync();
+                progress = new EbookReaderProgressControl();
+                uiAlternateContent.Visibility = Visibility.Visible;
+                uiAlternateContent.Children.Clear();
+                uiAlternateContent.Children.Add(progress);
+                progress.SetNBooks(selectedBooks.Count);
+            }
+
             switch (mark)
             {
                 case MarkCommandType.ChangeStatus:
@@ -172,14 +238,19 @@ namespace SimpleEpubReader.Controls
                         var srcfullname = bookData.DownloadData.FullFilePath;
                         var fname = bookData.DownloadData.FileName;
                         Logger.Log($"MARK: setting {fname} to {NewStatus}");
-                        var nd = CommonQueries.BookNavigationDataEnsure(bookdb, bookData);
-                        nd.CurrStatus = newStatus;
-                        if (deleteBook)
+
+                        bool deleteOk = true;
+                        if (progress != null)
                         {
-                            // TODO: How to delete it?
-                            ;
+                            deleteOk = await DeleteDownloadedBookAsync(progress, bookData);
                         }
-                        nok++;
+
+                        if (deleteOk)
+                        {
+                            var nd = CommonQueries.BookNavigationDataEnsure(bookdb, bookData);
+                            nd.CurrStatus = newStatus;
+                            nok++;
+                        }
                     }
                     break;
                 case MarkCommandType.NoChange:
@@ -194,6 +265,14 @@ namespace SimpleEpubReader.Controls
             {
                 CommonQueries.BookSaveChanges(bookdb);
             }
+
+            if (progress != null)
+            {
+                progress.AddLog($"Book move complete");
+                await Task.Delay(5_000); // wait so the user can see something happened.
+            }
+
+
             Logger.Log($"COPY: OK={nok}");
 
             // End by closing the dialog box.
@@ -204,14 +283,43 @@ namespace SimpleEpubReader.Controls
 
         IList<BookData> SavedSelectedBooks = null;
         Boolean SavedDeleteBook = false;
-
+        /// <summary>
+        /// Handles the entire problem of reviewing each of the selected books. Will pop up a little pop-up
+        /// and let the user do a review of each one.
+        /// </summary>
+        /// <returns></returns>
         public async Task RunSavedReviewEachBook()
         {
             if (SavedSelectedBooks == null) return;
             var selectedBooks = SavedSelectedBooks;
             var deleteBook = SavedDeleteBook;
 
+            // Setup to delete all selected books from the Nook
+            EbookReaderProgressControl progress = null;
+            if (deleteBook)
+            {
+                await SetupProgressFolderAsync();
+                progress = new EbookReaderProgressControl();
+                uiAlternateContent.Visibility = Visibility.Visible;
+                uiAlternateContent.Children.Clear();
+                uiAlternateContent.Children.Add(progress);
+                progress.SetNBooks(selectedBooks.Count);
+            }
+
             var bookdb = BookDataContext.Get();
+            var sh = new ContentDialog()
+            {
+                Title = "Review Book",
+                PrimaryButtonText = "OK",
+                SecondaryButtonText = "Cancel",
+            };
+            var reviewlist = new ReviewNoteStatusListControl();
+            reviewlist.SetBookList(selectedBooks);
+            sh.Content = reviewlist;
+            var result = await sh.ShowAsync();
+            ;
+#if NEVER_EVER_DEFINED
+// The old code that did a pop-up per book. The new way does one pop-up with a swipable list.
             foreach (var bookData in selectedBooks)
             {
                 var srcfullname = bookData.DownloadData.FullFilePath;
@@ -223,8 +331,7 @@ namespace SimpleEpubReader.Controls
                     PrimaryButtonText = "OK",
                     SecondaryButtonText = "Cancel",
                 };
-                // Old style: var review = new BookReview(); // This is the edit control, not the UserReview data
-                var review = new ReviewNoteStatusControl(); // This is the edit control, not the UserReview data
+                var review = new ReviewNoteStatusControl(); 
                 string defaultReviewText = null;
                 var BookData = bookData;
 
@@ -235,16 +342,24 @@ namespace SimpleEpubReader.Controls
                 {
                     case ContentDialogResult.Primary:
                         review.SaveData();
+
+                        bool deleteOk = true;
+                        if (progress != null)
+                        {
+                            deleteOk = await DeleteDownloadedBookAsync(progress, bookData);
+                        }
+
                         var nav = Navigator.Get();
                         //TODO: setup Rome?? nav.UpdateProjectRome(ControlId, GetCurrBookLocation());
                         break;
                 }
                 if (deleteBook)
                 {
-                    // How to delete it?
+                    // TODO: How to delete it?
                     ;
                 }
             }
+#endif
         }
     }
 }

@@ -64,92 +64,105 @@ namespace SimpleEpubReader.Database
             int nnodes = 0;
             List<BookData> newBooks = new List<BookData>();
 
-            using (var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read))
+            try
             {
-                using (var reader = ReaderFactory.Open(stream.AsStream()))
+                using (var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read))
                 {
-                    while (reader.MoveToNextEntry())
+                    using (var reader = ReaderFactory.Open(stream.AsStream()))
                     {
-                        if (token.IsCancellationRequested)
+                        while (reader.MoveToNextEntry())
                         {
-                            break;
-                        }
-                        System.Diagnostics.Debug.WriteLine($"ZIPREAD: {reader.Entry.Key} size {reader.Entry.Size}");
-
-                        // Is the rdf-files.tar file that Gutenberg uses. 
-                        // The zip file has one giant TAR file (rdf-files.tar) embedded in it.
-                        if (reader.Entry.Key.EndsWith(".tar"))
-                        {
-                            using (var tarStream = reader.OpenEntryStream())
+                            if (token.IsCancellationRequested)
                             {
-                                using (var tarReader = ReaderFactory.Open(tarStream))
-                                {
-                                    while (tarReader.MoveToNextEntry())
-                                    {
-                                        MemoryStream ms = new MemoryStream((int)tarReader.Entry.Size);
-                                        tarReader.WriteEntryTo(ms);
-                                        ms.Position = 0;
-                                        var sr = new StreamReader(ms);
-                                        var text = sr.ReadToEnd();
-                                        nnodes++;
-                                        if (token.IsCancellationRequested)
-                                        {
-                                            break;
-                                        }
+                                break;
+                            }
+                            System.Diagnostics.Debug.WriteLine($"ZIPREAD: {reader.Entry.Key} size {reader.Entry.Size}");
 
-                                        if (KnownBadFiles.Contains(tarReader.Entry.Key))
+                            // Is the rdf-files.tar file that Gutenberg uses. 
+                            // The zip file has one giant TAR file (rdf-files.tar) embedded in it.
+                            if (reader.Entry.Key.EndsWith(".tar"))
+                            {
+                                using (var tarStream = reader.OpenEntryStream())
+                                {
+                                    using (var tarReader = ReaderFactory.Open(tarStream))
+                                    {
+                                        while (tarReader.MoveToNextEntry())
                                         {
-                                            // Skip known bad files like entry 999999 -- has weird values for lots of stuff!
-                                        }
-                                        else
-                                        {
-                                            // Got a book; let the UI know.
-                                            newBooks.Clear();
-                                            if (tarReader.Entry.Key.Contains ("62548"))
+                                            MemoryStream ms = new MemoryStream((int)tarReader.Entry.Size);
+                                            tarReader.WriteEntryTo(ms);
+                                            ms.Position = 0;
+                                            var sr = new StreamReader(ms);
+                                            var text = sr.ReadToEnd();
+                                            nnodes++;
+                                            if (token.IsCancellationRequested)
                                             {
-                                                ; // useful hook for debugging.
+                                                break;
                                             }
 
-                                            // Reads and saves to database. And does a fancy merge if needed.
-                                            var newCount = Read(bookdb, tarReader.Entry.Key, text, newBooks, updateType);
-                                            nnewfiles += newCount;
-
-                                            if (nnewfiles > 6000 && nnewfiles < 9000)
+                                            if (KnownBadFiles.Contains(tarReader.Entry.Key))
                                             {
-                                                SaveSkipCount = 100;
+                                                // Skip known bad files like entry 999999 -- has weird values for lots of stuff!
                                             }
                                             else
                                             {
-                                                SaveSkipCount = 100; // save very frequently. Otherwise, ka-boom!
-                                            }
-
-                                            if (nnewfiles >= SaveAfterNFiles)
-                                            {
-                                                // FAIL: must save periodically. Can't accumulate a large number
-                                                // of books (e..g, 60K books in the catalog) and then save all at
-                                                // once; it will take up too much memory and will crash.
-                                                Log($"At index {CommonQueries.BookCount(bookdb)} file {file.Name} nfiles {nnewfiles}");
-                                                CommonQueries.BookSaveChanges(bookdb);
-
-                                                // Try resetting the singleton to reduce the number of crashes.
-                                                BookDataContext.ResetSingleton("InitialBookData.Db");
-                                                await Task.Delay(100); // Try a pause to reduce crashes.
-
-                                                SaveAfterNFiles += SaveSkipCount;
-
-                                            }
-                                            if (newCount > 0)
-                                            {
-                                                foreach (var bookData in newBooks)
+                                                // Got a book; let the UI know.
+                                                newBooks.Clear();
+                                                if (tarReader.Entry.Key.Contains("62548"))
                                                 {
-                                                    await ui.OnAddNewBook(bookData);
+                                                    ; // useful hook for debugging.
                                                 }
-                                            }
-                                            if (nnodes >= UiAfterNNodes)
-                                            {
-                                                //await ui.LogAsync($"Book: file {tarReader.Entry.Key}\nNNew: {nfiles} NProcesses {nnodes}\n");
-                                                await ui.OnTotalBooks(nnodes);
-                                                UiAfterNNodes += NodeReadCount;
+
+                                                // Reads and saves to database. And does a fancy merge if needed.
+                                                int newCount = 0;
+                                                try
+                                                {
+                                                    newCount = Read(bookdb, tarReader.Entry.Key, text, newBooks, updateType);
+                                                }
+                                                catch (Exception rdfex)
+                                                {
+                                                    // Do what on exception?
+                                                    Log($"Error: file {file.Name} name {tarReader.Entry.Key} exception {rdfex.Message}");
+                                                    newCount = 0;
+                                                }
+                                                nnewfiles += newCount;
+
+                                                if (nnewfiles > 6000 && nnewfiles < 9000)
+                                                {
+                                                    SaveSkipCount = 100;
+                                                }
+                                                else
+                                                {
+                                                    SaveSkipCount = 100; // save very frequently. Otherwise, ka-boom!
+                                                }
+
+                                                if (nnewfiles >= SaveAfterNFiles)
+                                                {
+                                                    // FAIL: must save periodically. Can't accumulate a large number
+                                                    // of books (e..g, 60K books in the catalog) and then save all at
+                                                    // once; it will take up too much memory and will crash.
+                                                    Log($"At index {CommonQueries.BookCount(bookdb)} file {file.Name} nfiles {nnewfiles}");
+                                                    CommonQueries.BookSaveChanges(bookdb);
+
+                                                    // Try resetting the singleton to reduce the number of crashes.
+                                                    BookDataContext.ResetSingleton("InitialBookData.Db");
+                                                    await Task.Delay(100); // Try a pause to reduce crashes.
+
+                                                    SaveAfterNFiles += SaveSkipCount;
+
+                                                }
+                                                if (newCount > 0)
+                                                {
+                                                    foreach (var bookData in newBooks)
+                                                    {
+                                                        await ui.OnAddNewBook(bookData);
+                                                    }
+                                                }
+                                                if (nnodes >= UiAfterNNodes)
+                                                {
+                                                    //await ui.LogAsync($"Book: file {tarReader.Entry.Key}\nNNew: {nfiles} NProcesses {nnodes}\n");
+                                                    await ui.OnTotalBooks(nnodes);
+                                                    UiAfterNNodes += NodeReadCount;
+                                                }
                                             }
                                         }
                                     }
@@ -158,6 +171,11 @@ namespace SimpleEpubReader.Database
                         }
                     }
                 }
+            }
+            catch (Exception readEx)
+            {
+                Log($"Error: reading Gutenberg ZIP file exception {readEx.Message}");
+                ; // something bad happened.
             }
             await ui.OnReadComplete(nnodes, nnewfiles);
             var delta = DateTime.Now.Subtract(startTime).TotalSeconds;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+using Newtonsoft.Json.Bson;
 using SimpleEpubReader.Database;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -11,18 +12,33 @@ namespace SimpleEpubReader.Controls
     {
         public ReviewNoteStatusControl()
         {
+            this.DataContextChanged += ReviewNoteStatusControl_DataContextChanged;
             this.InitializeComponent();
         }
+
+        private void ReviewNoteStatusControl_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            // DataContext must be a BookData
+        }
+
+        /// <summary>
+        /// Ensures that BookData has a Review item and that it's hooked to the BookData via the BookId.
+        /// </summary>
+        private void EnsureReview()
+        {
+            if (BookData != null && BookData.Review == null)
+            {
+                BookData.Review = new UserReview() { BookId = BookData.BookId };
+            }
+        }
+
         public void SaveData()
         {
             var bookdb = BookDataContext.Get();
 
-            if (BookData != null && BookData.Review != null)
+            if (BookData != null)
             {
-                if (BookData.Review == null)
-                {
-                    BookData.Review = new UserReview();
-                }
+                EnsureReview();
                 BookData.Review.Review = uiReview.TextValue;
                 BookData.Review.Tags = uiTags.Text;
                 CommonQueries.BookSaveChanges(bookdb);
@@ -39,15 +55,13 @@ namespace SimpleEpubReader.Controls
             PotentialNote = potentialNote;
         }
 
-        private BookData BookData { get; set; }
+        public BookData BookData { get { return this.DataContext as BookData; } set { if (this.DataContext != value) this.DataContext = value; } }
 
         public void SetBookData(BookData bookData, string defaultText)
         {
             BookData = bookData;
-            if (BookData.Review == null)
-            {
-                BookData.Review = new UserReview() { BookId = bookData.BookId };
-            }
+            if (BookData == null) return; // should never happen.
+            EnsureReview();
             if (string.IsNullOrEmpty(BookData.Review.Review))
             {
                 BookData.Review.Review = defaultText;
@@ -104,6 +118,7 @@ namespace SimpleEpubReader.Controls
         private void OnStarRatingChanged(RatingControl sender, object args)
         {
             var value = sender.Value;
+            EnsureReview();
             BookData.Review.NStars = value;
             var bookdb = BookDataContext.Get();
             CommonQueries.BookSaveChanges(bookdb);
@@ -133,6 +148,5 @@ namespace SimpleEpubReader.Controls
                 ne.DataContext = PotentialNote;
             }
         }
-
     }
 }

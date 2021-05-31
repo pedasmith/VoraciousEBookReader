@@ -1,0 +1,36 @@
+﻿<UserControl
+    x:Class="SimpleEpubReader.Controls.ReviewNoteStatusListControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SimpleEpubReader.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+    <UserControl.Resources>
+        <Style TargetType="Button">
+            <Setter Property="MinWidth" Value="70" />
+            <Setter Property="Margin" Value="1,0,1,0" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <FlipView x:Name="uiList" ItemsSource="{Binding BookList}" 
+                  >
+            <FlipView.ItemTemplate>
+                <DataTemplate>
+                    <local:ReviewNoteStatusControl Width="500" GotFocus="OnBookDataGotFocus" />
+                </DataTemplate>
+            </FlipView.ItemTemplate>
+        </FlipView>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button x:Name="uiPrev" Content="Previous" Click="OnPrev" />
+            <Button x:Name="uiSave" Content="Save" Click="OnSave" />
+            <Button x:Name="uiNext" Content="Next" Click="OnNext" />
+        </StackPanel>
+    </Grid>
+</UserControl>

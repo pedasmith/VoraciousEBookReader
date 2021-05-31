@@ -6,6 +6,7 @@ using Windows.UI.Core;
 using System.IO;
 using System.Threading;
 using System.ComponentModel.DataAnnotations;
+using Windows.Storage;
 
 namespace SimpleEpubReader.Database
 {
@@ -77,15 +78,18 @@ namespace SimpleEpubReader.Database
         /// <param name="ui"></param>
         /// <param name="uri"></param>
         /// <returns></returns>
-        public async Task<bool> DownloadFrom(IndexReader ui, Uri uri, string folder, string filename, CancellationToken ct)
+        public async Task<bool> DownloadFrom(IndexReader ui, Uri uri, StorageFolder folder, string filename, CancellationToken ct)
         {
             var retval = false;
             int totalRead = 0;
-            var fullpath = folder + @"\" + filename;
-            var file = await PCLStorage.FileSystem.Current.GetFileFromPathAsync(fullpath);
+            //var fullpath = folder + @"\" + filename;
+            //var file = await PCLStorage.FileSystem.Current.GetFileFromPathAsync(fullpath);
+            var file = await folder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
             Stream stream = null;
-            using (var outstream = await file.OpenAsync(PCLStorage.FileAccess.ReadAndWrite))
+            System.Diagnostics.Debug.WriteLine($"Note: downloading catalog from {uri.OriginalString}");
+            using (var outstreamUwp = await file.OpenAsync(FileAccessMode.ReadWrite)) // (PCLStorage.FileAccess.ReadAndWrite))
             {
+                var outstream = outstreamUwp.AsStreamForWrite();
                 await ui.LogAsync($"Start download from {uri.OriginalString}\n");
                 HttpResponseMessage result = null;
                 const uint mbufferSize = 1024 * 1024;
@@ -111,6 +115,8 @@ namespace SimpleEpubReader.Database
                     if (result.Content.Headers.ContentLength.HasValue)
                     {
                         ui.SetFileSize((ulong)result.Content.Headers.ContentLength.Value);
+                        System.Diagnostics.Debug.WriteLine($"Note: downloading catalog size={result.Content.Headers.ContentLength.Value}");
+
                     }
                     stream = await result.Content.ReadAsStreamAsync();
                     // Just having the stream means nothing; we need to read from the stream. That's
@@ -137,6 +143,7 @@ namespace SimpleEpubReader.Database
                         tempTotalRead += nread;
                         if (nread == 0) // When we get no bytes, the stream is done.
                         {
+                            System.Diagnostics.Debug.WriteLine($"Note: done reading size={totalRead}");
                             keepGoing = false;
                             retval = true;
                         }
@@ -162,6 +169,9 @@ namespace SimpleEpubReader.Database
                     ; // all of the actual data-reading exceptions.
                     await ui.LogAsync($"Read error: {readex.Message}");
                 }
+                // Must flush the contents
+                outstream.Flush();
+                outstream.Close();
             }
             await ui.OnStreamTotalProgressAsync((ulong)totalRead);
             await ui.OnStreamCompleteAsync();

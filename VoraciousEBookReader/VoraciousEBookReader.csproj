@@ -175,6 +175,12 @@
     <Compile Include="Controls\EBookReaderPickAndDownload.xaml.cs">
       <DependentUpon>EBookReaderPickAndDownload.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\EbookReaderProgressControl.xaml.cs">
+      <DependentUpon>EbookReaderProgressControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ReviewNoteStatusListControl.xaml.cs">
+      <DependentUpon>ReviewNoteStatusListControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EbookReader\BookLocation.cs" />
     <Compile Include="Controls\BookSearch.xaml.cs">
       <DependentUpon>BookSearch.xaml</DependentUpon>
@@ -471,6 +477,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\EbookReaderProgressControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\HelpControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -508,6 +518,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ReviewNoteStatusControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ReviewNoteStatusListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

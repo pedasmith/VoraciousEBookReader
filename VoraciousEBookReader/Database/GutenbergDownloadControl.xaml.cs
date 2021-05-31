@@ -137,13 +137,14 @@ namespace SimpleEpubReader.Database
             // http://www.gutenberg.org/cache/epub/feeds/rdf-files.tar.zip
             var uri = CurrentGutenbergCatalogLocation;
             var folder = FolderMethods.LocalCacheFolder;
+            var folderUwp = ApplicationData.Current.LocalCacheFolder;
             var filename = "gutenberg.zip";
             NNewBooks = 0;
             uiProgress.Maximum = FileBytes; // set to a reasonable first amount.
 
             // Start the actual work
 
-            bool gotfile = await gd.DownloadFrom(this, uri, folder, filename, cts.Token);
+            bool gotfile = await gd.DownloadFrom(this, uri, folderUwp, filename, cts.Token);
 
             if (gotfile)
             {
