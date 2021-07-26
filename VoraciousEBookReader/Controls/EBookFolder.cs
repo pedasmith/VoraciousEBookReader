@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Xml.XPath;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
@@ -32,34 +33,58 @@ namespace SimpleEpubReader.Controls
             }
             return folder;
         }
-        public static async Task<StorageFolder> GetFolderSilentAsync()
+        public class GetFolderResult
         {
-            if (!StorageApplicationPermissions.FutureAccessList.ContainsItem(EBOOKREADERFOLDERFILETOKEN)) return null;
+            public enum Reason {  Ok, NotSet, NoSuchFolder };
+            public Reason GetResult { get; set; } = Reason.Ok;
+            public StorageFolder Folder { get; set; } = null;
+            public static GetFolderResult CreateFromFolder(StorageFolder folder)
+            {
+                return new GetFolderResult() { Folder = folder, GetResult = Reason.Ok, };
+            }
+            public static GetFolderResult CreateFromError(Reason result)
+            {
+                return new GetFolderResult() { Folder = null, GetResult = result, };
+            }
+        }
+        public static async Task<GetFolderResult> GetFolderSilentAsync()
+        {
+            if (!StorageApplicationPermissions.FutureAccessList.ContainsItem(EBOOKREADERFOLDERFILETOKEN)) return GetFolderResult.CreateFromError (GetFolderResult.Reason.NotSet);
             try
             {
                 var folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(EBOOKREADERFOLDERFILETOKEN);
-                return folder;
+                return GetFolderResult.CreateFromFolder(folder);
             }
             catch (Exception)
             {
 
             }
-            return null;
+            return GetFolderResult.CreateFromError(GetFolderResult.Reason.NoSuchFolder);
         }
 
         public static async Task LaunchExplorerAtFolderAsync()
         {
-            var folder = await GetFolderSilentAsync();
-            if (folder != null)
+            var result = await GetFolderSilentAsync();
+            switch (result.GetResult)
             {
-                var launchOptions = new FolderLauncherOptions();
-                launchOptions.DesiredRemainingView = Windows.UI.ViewManagement.ViewSizePreference.UseMore;
-                await Launcher.LaunchFolderAsync(folder, launchOptions);
-            }
-            else
-            {
-                var dlg = new MessageDialog("No eBook Reader folder has been saved. The Send To eBook Reader command will set this value.");
-                await dlg.ShowAsync();
+                case GetFolderResult.Reason.NoSuchFolder:
+                    {
+                        var dlg = new MessageDialog("the eBook Reader folder cannot be reached. Is the eBook connected?");
+                        await dlg.ShowAsync();
+                    }
+                    break;
+                case GetFolderResult.Reason.NotSet:
+                    {
+                        var dlg = new MessageDialog("No eBook Reader folder has been saved. The Send To eBook Reader command will set this value.");
+                        await dlg.ShowAsync();
+                    }
+                    break;
+                case GetFolderResult.Reason.Ok:
+                    var folder = result.Folder;
+                        var launchOptions = new FolderLauncherOptions();
+                        launchOptions.DesiredRemainingView = Windows.UI.ViewManagement.ViewSizePreference.UseMore;
+                        await Launcher.LaunchFolderAsync(folder, launchOptions);
+                    break;
             }
         }
     }

@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="500">
+    d:DesignWidth="550">
 
     <Grid MinWidth="500" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
@@ -17,7 +17,7 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Text="TODO: Set downloaded book status" FontSize="32" />
+        <TextBlock Text="Update status for already-sent books" FontSize="32" />
         <StackPanel Grid.Row="1">
             <CheckBox Content="Select all" IsChecked="True" Checked="OnSelectAllCheck" Unchecked="OnSelectAllUnchecked" />
             <Line Width="2" X1="1" X2="400" Stroke="Black" HorizontalAlignment="Left"/>
@@ -26,7 +26,7 @@
             <ListView x:Name="uiBookList" ItemsSource="{Binding Books}" VerticalAlignment="Stretch">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <CheckBox Content="{Binding Title}" IsChecked="True" MaxWidth="480"/>
+                        <CheckBox Content="{Binding Title}" IsChecked="{Binding IsSelected, Mode=TwoWay}" MaxWidth="480"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

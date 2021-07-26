@@ -172,12 +172,13 @@
     <Compile Include="Controls\EBookReaderMark.xaml.cs">
       <DependentUpon>EBookReaderMark.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\EBookReaderPickAndDownload.xaml.cs">
-      <DependentUpon>EBookReaderPickAndDownload.xaml</DependentUpon>
+    <Compile Include="Controls\EBookReaderPickAndSend.xaml.cs">
+      <DependentUpon>EBookReaderPickAndSend.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\EbookReaderProgressControl.xaml.cs">
       <DependentUpon>EbookReaderProgressControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\HelperBookDataWithSelected.cs" />
     <Compile Include="Controls\ReviewNoteStatusListControl.xaml.cs">
       <DependentUpon>ReviewNoteStatusListControl.xaml</DependentUpon>
     </Compile>
@@ -298,6 +299,10 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\HelpFiles\HelpFileImages\Example-eBook-Reader-Sketch.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\HelpFiles\HelpFileImages\Windows-Explorer-With-eBook-Reader.png" />
     <Content Include="Assets\HelpScreenShots\010-About-Voracious-Ebook-Reader.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -433,6 +438,9 @@
     <Content Include="Assets\HelpScreenShots\295-Search-Elements.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Assets\HelpFiles\HelpeBookReader.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -473,7 +481,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\EBookReaderPickAndDownload.xaml">
+    <Page Include="Controls\EBookReaderPickAndSend.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

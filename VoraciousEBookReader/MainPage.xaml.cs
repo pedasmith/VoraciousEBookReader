@@ -708,14 +708,7 @@ namespace SimpleEpubReader
             dl.DialogParent = cd;
             await cd.ShowAsync();
         }
-
-        private void OnHelpToggle(object sender, RoutedEventArgs e)
-        {
-            uiHelpControl.Visibility = Toggle(uiHelpControl.Visibility);
-            uiReaderControl.Visibility = Toggle(uiReaderControl.Visibility);
-        }
-
-        private Visibility Toggle(Visibility value)
+        private Visibility ToggleVisibility(Visibility value)
         {
             switch (value)
             {
@@ -723,6 +716,22 @@ namespace SimpleEpubReader
                 default: return Visibility.Collapsed;
             }
         }
+
+        enum HelpType {  Classic, eBookReader};
+        HelpType CurrHelpType = HelpType.Classic;
+
+        private async void OnHelpToggle(object sender, RoutedEventArgs e)
+        {
+            uiHelpControl.Visibility = ToggleVisibility(uiHelpControl.Visibility);
+            uiReaderControl.Visibility = ToggleVisibility(uiReaderControl.Visibility);
+
+            if (uiHelpControl.Visibility == Visibility.Visible && CurrHelpType != HelpType.Classic)
+            {
+                // Switch to classic mode
+                await uiHelpControl.SetupHelpImages();
+            }
+        }
+
 
         /// <summary>
         /// Used to set the number of images displayed in the little image tab
@@ -820,7 +829,7 @@ namespace SimpleEpubReader
             {
                 popup.IsOpen = false;
             }
-            var content = new EBookReaderPickAndDownload();
+            var content = new EBookReaderPickAndSend();
             var dlg = new ContentDialog()
             {
                 Title = "Download book to an eBook Reader",
@@ -865,9 +874,13 @@ namespace SimpleEpubReader
         /// <summary>
         /// TODO: Shows help for using eBook Readers with Voracious EBOOK Reader
         /// </summary>
-        private void OnEbookReaderHelp(object sender, RoutedEventArgs e)
+        private async void OnEbookReaderHelp(object sender, RoutedEventArgs e)
         {
+            uiHelpControl.Visibility = ToggleVisibility(uiHelpControl.Visibility);
+            uiReaderControl.Visibility = ToggleVisibility(uiReaderControl.Visibility);
 
+            CurrHelpType = HelpType.eBookReader;
+            await uiHelpControl.SetupMarkdown();
         }
 
         /// <summary>

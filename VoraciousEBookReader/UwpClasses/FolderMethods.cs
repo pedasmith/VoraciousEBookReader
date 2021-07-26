@@ -38,11 +38,17 @@ namespace SimpleEpubReader.UwpClasses
                 return returnFolder.Path;
             }
         }
-        public static async Task<string> GetScreenShotsFolderAsync()
+        public static async Task<string> GetScreenShotsFolderAsync(string name  /* HelpScreenShots or HelpeBookReaderScreenShots */)
         {
             StorageFolder installationFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
-            var helpScreenShot = await installationFolder.GetFolderAsync(@"Assets\HelpScreenShots");
+            var helpScreenShot = await installationFolder.GetFolderAsync(@"Assets\" + name);
             return helpScreenShot.Path;
+        }
+        public static async Task<StorageFolder> GetHelpFilesFolderAsync()
+        {
+            StorageFolder installationFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+            var helpScreenShot = await installationFolder.GetFolderAsync(@"Assets\HelpFiles");
+            return helpScreenShot;
         }
 
         public static async Task<IFolder> EnsureDownloadFolder()

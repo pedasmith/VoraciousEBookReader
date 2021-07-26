@@ -4,6 +4,7 @@ using SimpleEpubReader.Searching;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -26,7 +27,8 @@ namespace SimpleEpubReader.Controls
 {
     public sealed partial class EBookReaderMark : UserControl
     {
-        public ObservableCollection<BookData> Books { get; } = new ObservableCollection<BookData>();
+        public ObservableCollection<HelperBookDataWithSelected> Books { get; } = new ObservableCollection<HelperBookDataWithSelected>();
+
         BookNavigationData.UserStatus NewStatus;
         public EBookReaderMark(BookNavigationData.UserStatus newStatus)
         {
@@ -48,11 +50,9 @@ namespace SimpleEpubReader.Controls
             var retval = new List<BookData>();
             foreach (var book in Books)
             {
-                var lvi = uiBookList.ContainerFromItem(book) as ListViewItem;
-                var check = lvi.ContentTemplateRoot as CheckBox; // must be kept in sync with the XAML, of course.
-                if (check.IsChecked.Value)
+                if (book.IsSelected)
                 {
-                    retval.Add(book);
+                    retval.Add(book.RawBook);
                 }
             }
             return retval;
@@ -85,7 +85,7 @@ namespace SimpleEpubReader.Controls
             // Finally add to the output
             foreach (var book in resultList)
             {
-                Books.Add(book);
+                Books.Add(new HelperBookDataWithSelected (book));
             }
         }
 
@@ -114,9 +114,7 @@ namespace SimpleEpubReader.Controls
         {
             foreach (var book in Books)
             {
-                var lvi = uiBookList.ContainerFromItem(book) as ListViewItem;
-                var check = lvi.ContentTemplateRoot as CheckBox; // must be kept in sync with the XAML, of course.
-                check.IsChecked = newCheck;
+                book.IsSelected = newCheck;
             }
         }
 
@@ -158,7 +156,7 @@ namespace SimpleEpubReader.Controls
         StorageFolder ProgressFolder = null;
         private async Task SetupProgressFolderAsync()
         {
-            StorageFolder ProgressFolder = await EBookFolder.GetFolderSilentAsync();
+            ProgressFolder = (await EBookFolder.GetFolderSilentAsync()).Folder;
             if (ProgressFolder == null)
             {
                 ProgressFolder = await EBookFolder.PickFolderAsync();

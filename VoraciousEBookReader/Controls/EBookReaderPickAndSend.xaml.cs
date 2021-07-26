@@ -15,10 +15,10 @@ using Windows.UI.Xaml.Controls;
 
 namespace SimpleEpubReader.Controls
 {
-    public sealed partial class EBookReaderPickAndDownload : UserControl
+    public sealed partial class EBookReaderPickAndSend : UserControl
     {
-        public ObservableCollection<BookData> Books { get; } = new ObservableCollection<BookData>();
-        public EBookReaderPickAndDownload()
+        public ObservableCollection<HelperBookDataWithSelected> Books { get; } = new ObservableCollection<HelperBookDataWithSelected>();
+        public EBookReaderPickAndSend()
         {
             this.InitializeComponent();
             this.DataContext = this;
@@ -27,7 +27,7 @@ namespace SimpleEpubReader.Controls
 
         private async void EBookReaderPickAndDownload_Loaded(object sender, RoutedEventArgs e)
         {
-            StorageFolder folder = await EBookFolder.GetFolderSilentAsync();
+            StorageFolder folder = (await EBookFolder.GetFolderSilentAsync()).Folder;
             if (folder != null)
             {
                 uiUserSaveFolderNote.Visibility = Visibility.Visible;
@@ -40,11 +40,9 @@ namespace SimpleEpubReader.Controls
             var retval = new List<BookData>();
             foreach (var book in Books)
             {
-                var lvi = uiBookList.ContainerFromItem(book) as ListViewItem;
-                var check = lvi.ContentTemplateRoot as CheckBox; // must be kept in sync with the XAML, of course.
-                if (check.IsChecked.Value)
+                if (book.IsSelected)
                 {
-                    retval.Add(book);
+                    retval.Add(book.RawBook);
                 }
             }
             return retval;
@@ -77,7 +75,7 @@ namespace SimpleEpubReader.Controls
             // Finally add to the output
             foreach (var book in resultList)
             {
-                Books.Add(book);
+                Books.Add(new HelperBookDataWithSelected(book));
             }
         }
 
@@ -106,9 +104,7 @@ namespace SimpleEpubReader.Controls
         {
             foreach (var book in Books)
             {
-                var lvi = uiBookList.ContainerFromItem(book) as ListViewItem;
-                var check = lvi.ContentTemplateRoot as CheckBox; // must be kept in sync with the XAML, of course.
-                check.IsChecked = newCheck;
+                book.IsSelected = newCheck;
             }
         }
 
@@ -119,13 +115,21 @@ namespace SimpleEpubReader.Controls
 
             var bookdb = BookDataContext.Get();
             var selectedBooks = GetSelectedBooks();
-            StorageFolder folder = await EBookFolder.GetFolderSilentAsync();
+            StorageFolder folder = (await EBookFolder.GetFolderSilentAsync()).Folder;
             if (folder == null)
             {
                 folder = await EBookFolder.PickFolderAsync();
             }
+            EbookReaderProgressControl progress = null;
             if (folder != null)
             {
+                progress = new EbookReaderProgressControl();
+                uiAlternateContent.Visibility = Visibility.Visible;
+                uiAlternateContent.Children.Clear();
+                uiAlternateContent.Children.Add(progress);
+                progress.SetNBooks(selectedBooks.Count);
+
+
                 foreach (var bookData in selectedBooks)
                 {
                     var srcfullname = bookData.DownloadData.FullFilePath;
@@ -136,12 +140,14 @@ namespace SimpleEpubReader.Controls
                         var exists = await folder.FileExistsAsync(fname);
                         if (!exists)
                         {
-                            Logger.Log($"COPY: copying {fname}");
+                            progress.SetCurrentBook(bookData.Title);
+                            Logger.Log($"SEND: sending {fname}");
                             await src.CopyAsync(folder, fname, NameCollisionOption.FailIfExists);
                         }
                         else
                         {
-                            Logger.Log($"COPY: no need to copy {fname}");
+                            progress.AddLog($"No need to send {fname}");
+                            Logger.Log($"SEND: no need to send {fname}\n");
                             ; //NOTE: possibly in the future I'll do something useful here -- like offer to 
                             // re-copy the file, or verify that it's at least the same size or something.
                         }
@@ -152,16 +158,23 @@ namespace SimpleEpubReader.Controls
                     catch (Exception ex)
                     {
                         nfail++;
+                        progress.AddLog($"ERROR: exception when sending {fname} message {ex.Message}\n");
                         Logger.Log($"ERROR: COPY: exception when copying {fname} message {ex.Message}");
                     }
                 }
             }
 
-            Logger.Log($"COPY: OK={nok} FAIL={nfail}");
+
+            Logger.Log($"COPY: OK={nok} FAIL={nfail}\n");
 
             if (nok > 0)
             {
                 CommonQueries.BookSaveChanges(bookdb);
+            }
+            if (progress != null)
+            {
+                progress.AddLog($"Book send complete OK={nok} FAIL={nfail}");
+                await Task.Delay(5_000); // wait so the user can see something happened.
             }
 
             // End by closing the dialog box.

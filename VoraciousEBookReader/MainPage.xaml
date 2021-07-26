@@ -123,7 +123,7 @@
                                 <MenuFlyoutItem Text="Mark eBook Reader books" Icon="Accept" Click="OnEbookReaderMark" />
                                 <MenuFlyoutSeparator />
                                 <MenuFlyoutItem Text="Set eBook Reader folder" Click="OnEbookReaderSetFolder" />
-                                <MenuFlyoutItem Text="Open eBook Reader's Folder" Click="OnEbookReaderOpenFolder" />
+                                <MenuFlyoutItem Text="Open eBook Reader Folder" Click="OnEbookReaderOpenFolder" />
                                 <MenuFlyoutItem Text="Help with eBook Readers" Icon="Help" Click="OnEbookReaderHelp" />
                             </MenuFlyout>
                         </AppBarButton.Flyout>
