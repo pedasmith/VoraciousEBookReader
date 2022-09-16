@@ -163,7 +163,8 @@ namespace SimpleEpubReader.Database
 
                 await Task.Run(async () =>
                 {
-                    retval = await RdfReader.ReadZipTarRdfFileAsync(this, bookdb, file, cts.Token, RdfReader.UpdateType.Fast);
+                    RdfReader.UpdateType updateType = RdfReader.UpdateType.Full;
+                    retval = await RdfReader.ReadZipTarRdfFileAsync(this, bookdb, file, cts.Token, updateType);
                     BookDataContext.ResetSingleton(null); // must reset database (otherwise no records can be found)
                     ;
                 });

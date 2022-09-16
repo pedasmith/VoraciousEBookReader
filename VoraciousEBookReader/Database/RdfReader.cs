@@ -107,7 +107,7 @@ namespace SimpleEpubReader.Database
                                             {
                                                 // Got a book; let the UI know.
                                                 newBooks.Clear();
-                                                if (tarReader.Entry.Key.Contains("62548"))
+                                                if (tarReader.Entry.Key.Contains("65379"))
                                                 {
                                                     ; // useful hook for debugging.
                                                 }
