@@ -1,9 +1,11 @@
-﻿using PCLStorage;
+﻿using Microsoft.Toolkit.Uwp.UI.Controls.TextToolbarFormats;
+using PCLStorage;
 using SharpCompress.Readers;
 using SimpleEpubReader.FileWizards;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -107,7 +109,7 @@ namespace SimpleEpubReader.Database
                                             {
                                                 // Got a book; let the UI know.
                                                 newBooks.Clear();
-                                                if (tarReader.Entry.Key.Contains("65379"))
+                                                if (tarReader.Entry.Key.Contains("69203"))
                                                 {
                                                     ; // useful hook for debugging.
                                                 }
@@ -116,7 +118,7 @@ namespace SimpleEpubReader.Database
                                                 int newCount = 0;
                                                 try
                                                 {
-                                                    newCount = Read(bookdb, tarReader.Entry.Key, text, newBooks, updateType);
+                                                    newCount = ReadRdfFileAndInsert(bookdb, tarReader.Entry.Key, text, newBooks, updateType);
                                                 }
                                                 catch (Exception rdfex)
                                                 {
@@ -328,6 +330,9 @@ namespace SimpleEpubReader.Database
             }
             return retval;
         }
+        /// <summary>
+        /// Given a <dcterms:hasFormat> blob, extract the file format + file location data.
+        /// </summary>
         private static FilenameAndFormatData ExtractHasFormat(string logname, XmlNode node)
         {
             bool extentIsZero = false;
@@ -432,7 +437,26 @@ namespace SimpleEpubReader.Database
             if (!retval.IsKnownMimeType) Log($"ERROR: hasFormat: Unknown mime type {retval.MimeType} for {logname}");
             return retval;
         }
+        /// <summary>
+        /// Creates an EPUB FilenameAndFormatData that's for an EPUB. Needed because Project Gutenberg RDF files
+        /// as of 2022-10-22 are broken: they don't include EPUB files first time around (will be added a month later
+        /// when they reprocess) and have bad links.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        private static FilenameAndFormatData MakeEpubFromFormat (FilenameAndFormatData source)
+        {
+            if (source == null) return null;
+            FilenameAndFormatData retval = new FilenameAndFormatData(source);
+            retval.MimeType = "application/epub+zip";
+            // extent will be hopelessly wrong, but that's life.
+            var gutIndex = source.GutenbergStyleIndexNumber;
+            if (gutIndex < 1) return null;
+            if (gutIndex < 50000) return null; // never for old things? TODO: make this more dynamic?
 
+            retval.FileName = $"https://www.gutenberg.org/cache/epub/{gutIndex}/pg{gutIndex}-images.epub";
+            return retval;
+        }
 #if EXAMPLE_XML
     <dcterms:language>
       <rdf:Description rdf:nodeID="Nc3827dd334c44413ab159b8f40d432ec">
@@ -550,7 +574,7 @@ namespace SimpleEpubReader.Database
     </marcrel:trl>
 #endif
 
-
+        private static int NUnknownMarcRecords = 0;
         private static BookData ExtractBook(string logname, XmlNode node)
         {
             var book = new BookData();
@@ -564,6 +588,8 @@ namespace SimpleEpubReader.Database
                 Log($"ERROR: BookId: missing rdf:about with an id? for {logname}");
                 return null;
             }
+            FilenameAndFormatData txtFormat = null;
+            var haveEpub = false;
             foreach (var cn in node.ChildNodes)
             {
                 var value = cn as XmlNode;
@@ -586,9 +612,21 @@ namespace SimpleEpubReader.Database
                         if (format.Extent > 0)
                         {
                             // Gutenberg has a bunch of badly-made files which end up as zero size.
-                            // In all cases where the extend it zero, the actual file on project gutenberg in fact
+                            // In all cases where the extent is zero, the actual file on project gutenberg in fact
                             // exists but has no bytes. There's no point in adding a catalog entry for something that
                             // can't actually show up.
+                            var ftype = format.GetFileType();
+                            switch (ftype)
+                            {
+                                case FilenameAndFormatData.ProcessedFileType.TextNotUtf8:
+                                case FilenameAndFormatData.ProcessedFileType.Text:
+                                    txtFormat = format; // stash this away to make the EPUB type
+                                    break;
+                                case FilenameAndFormatData.ProcessedFileType.EPub:
+                                case FilenameAndFormatData.ProcessedFileType.EPubNoImages:
+                                    haveEpub = true;
+                                    break;
+                            }
                             book.Files.Add(format);
                         }
                         break;
@@ -706,6 +744,10 @@ namespace SimpleEpubReader.Database
                     case "pgterms:marc520": // A fun and wonderfully illustrated version of 
                     case "pgterms:marc902": // http://www.gutenberg.org/dirs/8/7/8/8789/8789-h/images/titlepage.jpg 
                     case "pgterms:marc903": // http://www.gutenberg.org/files/22761/22761-page-images/cover.tif
+                    case "pgterms:marc904": // original: https://archive.org/details/worldsinmakingev00arrhuoft/page/n5/mode/2up
+                    case "pgterms:marc905": // uniqueified author? e.g. 20210306045855reynolds
+                    case "pgterms:marc906": // original year? e.g. 1923
+                    case "pgterms:marc907": // Country? e.g. US us UK GB FR NY es United States
                         // Not really unknown, just uninteresting to me: Log($"Unknown marc: {value.Name} == {value.InnerText} for {logname}");
                         break;
 
@@ -713,12 +755,36 @@ namespace SimpleEpubReader.Database
                         // Don't care: Log($"Unknown marc: {value.Name} == {value.InnerText} for {logname}");
                         break;
 
+
+
                     // Front cover e.g. http://www.gutenberg.org/files/3859/3859-h/images/cover.jpg
                     case "pgterms:marc901": break;
 
                     default:
-                        Log($"XML: {value.Name} but expected e.g. dcterms:hasFormat or dcterms:language etc. for {logname}");
+                        if (NUnknownMarcRecords == 0)
+                        {
+                            Log($"XML: unknown XML item. Individual RDF files are at e.g. https://www.gutenberg.org/cache/epub/35426/pg35426.rdf");
+                            Log($"XML: Gutenberg offline catalog information at https://www.gutenberg.org/ebooks/offline_catalogs.html#xmlrdf");
+                        }
+                        var logvalue = value.InnerText;
+                        if (logvalue.Length > 40) logvalue = logvalue.Substring(0, 40);
+                        Log($"XML: {value.Name} but expected e.g. dcterms:hasFormat or dcterms:language etc. for {logname}; value={logvalue}");
+                        NUnknownMarcRecords++;
                         break;
+                }
+            }
+            // Create an EPUB for all books > Id 50000.
+            // FAIL: Gutenberg creates incorrect catalogs. They don't include the EPUB until 
+            //  month after the initial creation thanks to an incorrect RDF creation script. And the 
+            // links are just wrong; the links like https://www.gutenberg.org/ebooks/39198.epub.images
+            // are really just redirects(!)
+            if (txtFormat != null && haveEpub == false)
+            {
+                var epubFormat = MakeEpubFromFormat(txtFormat);
+                if (epubFormat != null)
+                {
+                    // add to the list of formats.
+                    book.Files.Add(epubFormat);
                 }
             }
 
@@ -745,7 +811,7 @@ namespace SimpleEpubReader.Database
         /// <param name="xmlData"></param>
         /// <param name="newBooks"></param>
         /// <returns></returns>
-        private static int Read(BookDataContext bookdb, string logname, string xmlData, IList<BookData> newBooks, UpdateType updateType)
+        private static int ReadRdfFileAndInsert(BookDataContext bookdb, string logname, string xmlData, IList<BookData> newBooks, UpdateType updateType)
         {
             // This is a state machine, which means that some pretty important parts are just a little
             // bit buried. When a book is done, take a look at "pgterms:ebook" which has ExtractBook,

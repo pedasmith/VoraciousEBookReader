@@ -135,6 +135,7 @@
                                 <AppBarButton Label="Rebuild Database" Click="OnRebuildDatabase" />
                                 -->
                                 <MenuFlyoutItem Text="Show location" Click="OnShowLocation" />
+                                <MenuFlyoutItem Text="Copy Other Install" Click="OnCopyOtherInstall" />
                                 <MenuFlyoutItem Text="Download Files" Click="OnDownloadInitialFiles" />
                                 <MenuFlyoutItem Text="Download Catalog" Click="OnDownloadLatestCatalog" />
                                 <MenuFlyoutItem Text="Rebuild clean Database" Click="OnCreateDatabase" />

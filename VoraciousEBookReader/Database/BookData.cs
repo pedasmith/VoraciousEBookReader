@@ -21,6 +21,7 @@ interface IGetSearchArea { }
 #else
 using SimpleEpubReader.Searching;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 #endif
 
 namespace SimpleEpubReader.Database
@@ -327,6 +328,20 @@ namespace SimpleEpubReader.Database
 
     public class FilenameAndFormatData : INotifyPropertyChanged, INotifyPropertyChanging
     {
+        public FilenameAndFormatData()
+        {
+            ;
+        }
+        public FilenameAndFormatData(FilenameAndFormatData source)
+        {
+            this.Id = source.Id;
+            this.BookId = source.BookId;
+            this.Extent = source.Extent;
+            this.FileName = source.FileName;
+            this.FileType = source.FileType;
+            this.LastModified = source.LastModified;
+            this.MimeType = source.MimeType;
+        }
         private int id;
         private string fileName = "";
         private string fileType = "";
@@ -401,7 +416,7 @@ namespace SimpleEpubReader.Database
                     case ProcessedFileType.PS:
                     case ProcessedFileType.Tex:
                         // Only include the PDF/PS if we don't have an epub. Although some people
-                        // might prefer a PDF, the Gutenberg reality is that they public epubs,
+                        // might prefer a PDF, the Gutenberg reality is that they create epubs,
                         // not pdfs. The few cases with PDFs are a total anomoly.
                         if (!haveEpub)
                         {
@@ -453,6 +468,20 @@ namespace SimpleEpubReader.Database
         public string BookId { get => bookId; set { if (bookId != value) { NotifyPropertyChanging(); bookId = value; NotifyPropertyChanged(); } } }
         public int Extent { get => extent; set { if (extent != value) { NotifyPropertyChanging(); extent = value; NotifyPropertyChanged(); } } }
         public string MimeType { get => mimeType; set { if (mimeType != value) { NotifyPropertyChanging(); mimeType = value; NotifyPropertyChanged(); } } }
+
+        public int GutenbergStyleIndexNumber
+        {
+            get
+            {
+                var id = BookId;
+                var idx = id.IndexOf('/');
+                if (idx < 0) return 0;
+                var nstr = id.Substring(idx + 1);
+                int gutIndex = 0;
+                Int32.TryParse(nstr, out gutIndex);
+                return gutIndex;
+            }
+        }
         /// <summary>
         /// These are in the default preference order
         /// </summary>
@@ -490,7 +519,8 @@ namespace SimpleEpubReader.Database
             switch (MimeType)
             {
                 case "application/epub+zip":
-                    return (FileName.Contains(".images")) ? ProcessedFileType.EPub : ProcessedFileType.EPubNoImages;
+                    //FAIL: they have two different patterns for epubs with images.
+                    return (FileName.Contains(".images") || FileName.Contains("-images.epub")) ? ProcessedFileType.EPub : ProcessedFileType.EPubNoImages;
 
                 case "application/octet-stream": // seemingly obsolete -- used for old books only?
                     return ProcessedFileType.Unknown;
@@ -883,6 +913,7 @@ namespace SimpleEpubReader.Database
             var retval = true;
             foreach (var afile in a.Files)
             {
+                if (FileIsKindle(afile.FileName)) continue; // Don't care about kindle files 
                 var hasMatch = false;
                 foreach (var bfile in b.Files)
                 {
@@ -896,6 +927,53 @@ namespace SimpleEpubReader.Database
                 {
                     retval = false;
                     break;
+                }
+            }
+            return retval;
+        }
+        public static bool FilesMatchEpub(BookData a, BookData b)
+        {
+            var retval = true;
+            foreach (var afile in a.Files)
+            {
+                if (!FileIsEpub(afile.FileName)) continue; // Don't care about non-epub 
+                var hasMatch = false;
+                foreach (var bfile in b.Files)
+                {
+                    if (afile.FileName == bfile.FileName)
+                    {
+                        hasMatch = true;
+                        break;
+                    }
+                }
+                if (!hasMatch)
+                {
+                    retval = false;
+                    break;
+                }
+            }
+            return retval;
+        }
+        public static bool FileIsEpub(string fname)
+        {
+            var retval = fname.EndsWith(".epub") || fname.Contains(".epub."); // why does Gutenberg do this :-(
+            return retval;
+        }
+        public static bool FileIsKindle(string fname)
+        {
+            var retval = fname.Contains(".kindle.");
+            return retval;
+        }
+
+        public static bool FilesIncludesEpub(BookData bd)
+        {
+            var retval = false;
+            foreach (var afile in bd.Files)
+            {
+                if (FileIsEpub(afile.FileName))
+                {
+                    retval = true;
+                    break; // Once I find one, that is good enough.
                 }
             }
             return retval;

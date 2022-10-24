@@ -26,8 +26,7 @@
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <PackageCertificateKeyFile>VoraciousEBookReader_TemporaryKey.pfx</PackageCertificateKeyFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <PackageCertificateThumbprint>
-    </PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>6976BED3F2813CAEC11D42FA1FFB726C371267B6</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -567,13 +566,13 @@
       <Version>6.1.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
+      <Version>13.0.1</Version>
     </PackageReference>
     <PackageReference Include="PCLStorage">
       <Version>1.0.2</Version>
     </PackageReference>
     <PackageReference Include="sharpcompress">
-      <Version>0.26.0</Version>
+      <Version>0.32.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

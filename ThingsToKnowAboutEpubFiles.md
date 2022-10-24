@@ -78,8 +78,37 @@ Project Gutenberg sometimes delays adding in the .EPUB files to their catalog. T
 
 Worse, the first bytes of an EPUB file, PK\3\4, (the magic number) are the same as the bytes of a ZIP file. So the only way to tell from the other is to see if the extension is a .ZIP extension.
 
-
 **Solution** is to test the extension
+
+**Update** 2022-010-22: The gutenberg people actually just delay adding the EPUB file to the catalog. On the first day, they generate all the files (including the EPUB files), but manage to generate the RDF (catalog) file part-way through. They then regenerate every file once a month, so the next time around, they get the EPUB files OK.
+
+**Solution** is to realize that for every gutenberg entry after ____, the EPUB exists even though it's not in the catalog.
+
+**Information** for a given book (like 69198, A Bird of Passage)
+
+- [ZIP of  RDF files](http://www.gutenberg.org/cache/epub/feeds/rdf-files.tar.zip)
+- [RDF file](https://www.gutenberg.org/cache/epub/69198/pg69198.rdf)
+- [Book Overview](https://www.gutenberg.org/ebooks/69198)
+- [**EPUB Cache**](https://www.gutenberg.org/cache/epub/69198/pg69198.epub)
+- [EPUB from web](https://www.gutenberg.org/ebooks/69198.epub.images)
+- [TXT from new RDF](https://www.gutenberg.org/files/69198/69198-0.txt)
+- [TXT from older RDF](https://www.gutenberg.org/files/49198/49198.txt)
+- [TXT from older RDF](https://www.gutenberg.org/ebooks/49198.txt.utf-8)
+- [EPUB from RDF](https://www.gutenberg.org/ebooks/39198.epub.images)
+- [More file](https://www.gutenberg.org/files/69198/)
+- [Dir with all files](https://www.gutenberg.org/cache/epub/69198)
+
+This means there are **3** patterns to the location of EPUB files
+1. [Cache + Image](https://www.gutenberg.org/cache/epub/%1/pg%1-images.epub) **BEST**
+2. [Cache NoImage](https://www.gutenberg.org/cache/epub/%1/pg%1.epub)
+3. [EBooks](https://www.gutenberg.org/ebooks/%1.epub.images) just redirects
+4. [Cache](https://www.gutenberg.org/files/%1/pg%1.epub) is logical but doesn't actually exist
+
+The #1 https://www.gutenberg.org/cache/epub/%1/pg%1-images.epub is the BEST pattern. It gets epub files with images and they always seem to exist (except for books that aren't ebooks).
+
+Old: Note that the RDF file says that the files are all in the 'files' directory. But it's better to look in the 'cache' directory for 'new' entries because that's where they are. Or in the 'epubs' directory for reasons.
+
+Update 2022-10-22: Note that the RDF file that that the files are all in the 'ebooks' directory. But those are all just 302 redirects; the actual content is in the cache/epub directory. There are some files in the 'files' directory, but they are mostly uninteresting.
 
 ## Finding HTML files, problem #1: encoding
 

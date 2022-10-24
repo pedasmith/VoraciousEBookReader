@@ -49,7 +49,7 @@ namespace SimpleEpubReader.Database
         Task DownloadTask = null;
         private async void OnDownloadOrCancel(object sender, RoutedEventArgs e)
         {
-            if (cts == null) // Not running a download; must be a download request
+            if (cts == null) // Not already running a download; must be a download request
             {
                 // Download!
                 uiOk.IsEnabled = false;

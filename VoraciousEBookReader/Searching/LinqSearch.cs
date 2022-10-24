@@ -8,7 +8,7 @@ namespace SimpleEpubReader.Searching
 {
     static public class AllBookSearch
     {
-        public const int MaxMatch = 150;
+        public const int MaxMatch = 300;
 
         [Flags]
         enum LinqIncludes
@@ -17,6 +17,7 @@ namespace SimpleEpubReader.Searching
             Notes = 0x01, Review = 0x02, DownloadData = 0x04, NavigationData = 0x08,
             People = 0x10,
             LanguageExact = 0x20, LanguageExactOrNull = 0x40,
+            Files = 0x80,
 
             UserData = 0x0F, // don't include anything not in the gutenberg catalog
             LanguagesFlags = 0x60, // all of the language flags; generally only do one!
@@ -55,6 +56,8 @@ namespace SimpleEpubReader.Searching
             HashSet<string> idlist = searchOperations != null ? CommonQueries.BookSearchs(searchOperations) : null;
             const string DefaultLanguage = "en";
 
+            bool mustIncludeEpub = false;
+
             if (language == "*")
             {
                 ; // nothing special to restrict the languages
@@ -83,7 +86,7 @@ namespace SimpleEpubReader.Searching
 
                     break;
                 case "PickToDownload": // pick book to download. Have to be extra good with the query so it's fast.
-                    includes |= LinqIncludes.DownloadData;
+                    includes |= LinqIncludes.DownloadData | LinqIncludes.Files;
                     if (!string.IsNullOrEmpty(search))
                     {
                         includes |= LinqIncludes.People;
@@ -99,6 +102,7 @@ namespace SimpleEpubReader.Searching
 
             if (idlist != null) queryList = queryList.Where(b => idlist.Contains(b.BookId));
 
+            //if (includes.HasFlag(LinqIncludes.Files)) queryList = queryList.Include(b => b.Files);
             if (includes.HasFlag(LinqIncludes.People)) queryList = queryList.Include(b => b.People);
             if (includes.HasFlag(LinqIncludes.Notes)) queryList = queryList.Include(b => b.Notes).Include(b => b.Notes.Notes);
             if (includes.HasFlag(LinqIncludes.Review)) queryList = queryList.Include(b => b.Review);
@@ -121,9 +125,17 @@ namespace SimpleEpubReader.Searching
                     break;
 
                 case "PickToDownload":
+                    // TODO: doesn't work across computers? The DownloadData seems to always be NULL in the bookmarks
+                    // which means when I switch computers, all the books I've downloaded read and finished
+                    // will show up in the list?
                     matchList = queryList
                         .Where(b => b.DownloadData == null || b.DownloadData.CurrFileStatus != DownloadData.FileStatus.Downloaded)
+                        .Where(b => b.NavigationData == null
+                            || (b.NavigationData.NSwipeLeft < 1
+                                && b.NavigationData.CurrStatus == BookNavigationData.UserStatus.NoStatus
+                            ))
                         ;
+                    mustIncludeEpub = true;
                     break;
                 case "Downloaded":
                     matchList = queryList
@@ -184,9 +196,24 @@ namespace SimpleEpubReader.Searching
             // Step three: filter based on search. Blank searches are special.
             if (searchOperations == null)
             {
-                enumerableList = matchList
-                    .Take(MaxMatch + 1)
-                    .AsEnumerable();
+                var newlist = new List<BookData>();
+                enumerableList = newlist;
+                foreach (var book in matchList)
+                {
+                    if (true || !mustIncludeEpub // turn this off until it works; the .Files are always the same
+                        || BookData.FilesIncludesEpub(book))
+                    {
+                        newlist.Add(book);
+                        if (newlist.Count > MaxMatch)
+                        {
+                            break;
+                        }
+                    }
+                }
+                // Simple code removed when the more complex logic for EPUB was introduced
+                //enumerableList = matchList
+                //    .Take(MaxMatch + 1)
+                //    .AsEnumerable();
             }
             else
             {
@@ -194,7 +221,8 @@ namespace SimpleEpubReader.Searching
                 enumerableList = newlist;
                 foreach (var book in matchList)
                 {
-                    if (searchOperations.Matches(book))
+                    var epubMatch = true; // turn this off until it works !mustIncludeEpub || BookData.FilesIncludesEpub(book);
+                    if (epubMatch && searchOperations.Matches(book))
                     {
                         newlist.Add(book);
                         if (newlist.Count > MaxMatch) // gotta end early :-(

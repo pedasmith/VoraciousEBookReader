@@ -87,6 +87,7 @@ namespace SimpleEpubReader.Database
             var file = await folder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
             Stream stream = null;
             System.Diagnostics.Debug.WriteLine($"Note: downloading catalog from {uri.OriginalString}");
+            System.Diagnostics.Debug.WriteLine($"Note: output file Path={file.Path} DisplayName={file.DisplayName}");
             using (var outstreamUwp = await file.OpenAsync(FileAccessMode.ReadWrite)) // (PCLStorage.FileAccess.ReadAndWrite))
             {
                 var outstream = outstreamUwp.AsStreamForWrite();

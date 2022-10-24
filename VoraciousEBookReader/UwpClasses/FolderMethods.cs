@@ -11,7 +11,7 @@ namespace SimpleEpubReader.UwpClasses
 {
     public static class FolderMethods
     {
-        const string DownloadFolder = "download";
+        public const string DownloadFolder = "download";
 
         public static string InstallationFolder
         {

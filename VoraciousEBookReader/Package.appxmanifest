@@ -8,7 +8,7 @@
 
   <Identity
     Name="48425ShipwreckSoftware.558159B35D87A"
-    Publisher="CN=ShipwreckSoftware"
+    Publisher="CN=Shipwreck Software"
     Version="1.4.35.0" />
 
   <mp:PhoneIdentity PhoneProductId="359c9edb-1a02-4580-82a7-049043f02b6b" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
@@ -51,6 +51,7 @@
           <uap:FileTypeAssociation Name="ebooks">
             <uap:SupportedFileTypes>
               <uap:FileType>.epub</uap:FileType>
+              <uap:FileType>.epub3</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>EPUB Ebook format</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>

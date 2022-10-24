@@ -545,8 +545,37 @@ namespace SimpleEpubReader
                 Content = new TextBlock() { Text = txt, TextWrapping = TextWrapping.Wrap, IsTextSelectionEnabled = true },
                 Title = "Current location",
                 PrimaryButtonText = "OK",
+                SecondaryButtonText = "Copy",
             };
-            await dlg.ShowAsync();
+            var button = await dlg.ShowAsync();
+            switch (button)
+            {
+                case ContentDialogResult.Secondary:
+                    var dp = new DataPackage();
+                    dp.Properties.Title = "Local Folder";
+                    dp.SetText(FolderMethods.LocalFolder);
+                    dp.RequestedOperation = DataPackageOperation.Copy;
+                    Clipboard.SetContent(dp);
+                    break;
+            }
+        }
+        private async void OnCopyOtherInstall(object sender, RoutedEventArgs e)
+        {
+            var root = ApplicationData.Current.LocalCacheFolder;
+            var destFolder = await root.CreateFolderAsync(FolderMethods.DownloadFolder, Windows.Storage.CreationCollisionOption.OpenIfExists);
+
+            var picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.List;
+            picker.SuggestedStartLocation = PickerLocationId.Downloads;
+            picker.FileTypeFilter.Add(".epub");
+            picker.FileTypeFilter.Add(".epub3");
+            picker.FileTypeFilter.Add(".txt");
+            var list = await picker.PickMultipleFilesAsync();
+            foreach (var file in list)
+            {
+                // TODO: works, but badly?
+                await file.CopyAsync (destFolder, file.Name, Windows.Storage.NameCollisionOption.ReplaceExisting);
+            }
         }
 
         /// <summary>

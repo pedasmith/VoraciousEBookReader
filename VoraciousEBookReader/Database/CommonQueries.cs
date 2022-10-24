@@ -97,14 +97,28 @@ namespace SimpleEpubReader.Database
                                 {
                                     // Grab the full data including the number of files
                                     dbbook = CommonQueries.BookGetFiles(bookdb, book.BookId);
-                                    var mustReplace = book.Files.Count != dbbook.Files.Count;
+                                    // Remove all the kindle books; they aren't interesting
+                                    //int bookNNotKindle = 0;
+                                    //foreach (var item in book.Files)
+                                    //{
+                                    //    if (!BookData.FileIsKindle(item.FileName)) bookNNotKindle++; // Database has kindle books, so don't scrub them from the book files
+                                    //}
+                                    //int dbNNotKindle = 0;
+                                    //foreach (var item in dbbook.Files)
+                                    //{
+                                    //    if (!BookData.FileIsKindle(item.FileName)) dbNNotKindle++; // Database has kindle books, so don't scrub them from the book files
+                                    //}
+                                    //var mustReplace = bookNNotKindle != dbNNotKindle;
 
                                     // In case the files don't match exactly....
-                                    if (!mustReplace)
-                                    {
-                                        //TODO: make faster? Or keep because it's needed functionality?
-                                        mustReplace = !BookData.FilesMatch(book, dbbook);
-                                    }
+                                    //if (!mustReplace)
+                                    //{
+                                    //    //TODO: make faster? Or keep because it's needed functionality?
+                                    //    //Update: 2022-10-09: Really only care about epub books
+                                    //    mustReplace = !BookData.FilesMatchEpub(book, dbbook);
+                                    //}
+                                    // Ignore everything we just did :-)
+                                    var mustReplace = !BookData.FilesMatchEpub(book, dbbook);
                                     if (mustReplace)
                                     {
                                         //FAIL: project gutenberg LOVES changing their URLs. If the old list doesn't match the 
