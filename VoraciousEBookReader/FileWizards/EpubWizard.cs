@@ -180,6 +180,10 @@ namespace SimpleEpubReader.FileWizards
                         case "ss":
                             // Part of class="id" -- is seen in e.g. Fireless Locomotive
                             break;
+                        case "by":
+                            // TODO: Part of e.g. <section aria-labelledby="h2-1"> like in Bitcoin in a Nutshell
+                            App.Error($"NOTE in HtmlStringContainsId at index {eqIndex} expected id or (s)rc not {partial} for nodetype={nodeType}");
+                            break;
                         default:
                             App.Error($"ERROR in HtmlStringContainsId at index {eqIndex} expected id or (s)rc not {partial} ");
                             break;

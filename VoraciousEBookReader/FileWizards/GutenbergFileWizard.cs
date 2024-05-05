@@ -69,6 +69,13 @@ namespace SimpleEpubReader.FileWizards
             var xmlstring = book.SpecialResources.Opf.TextContent;
             if (string.IsNullOrWhiteSpace(xmlstring)) return data;
 
+            if (xmlstring.Contains ("<!DOCTYPE html>"))
+            {
+                // The "Bitcoints for Dummies" problem -- it includes a <!DOCTYPE html> line
+                // which some online checkers say makes the file invalid.
+                xmlstring = xmlstring.Replace("<!DOCTYPE html>", "");
+            }
+
             var doc = new Windows.Data.Xml.Dom.XmlDocument();
             doc.LoadXml(xmlstring);
             var metalist = doc.GetElementsByTagName("metadata");

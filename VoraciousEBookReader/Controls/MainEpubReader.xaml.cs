@@ -501,7 +501,7 @@ namespace SimpleEpubReader.Controls
                 }
             }
             // Will, e.g. cause the chapter display to update. The chapter display needs the HTML have been
-            // fully loaded before it can be call successfully.
+            // fully loaded before it can be called successfully.
             // Correction: doesn't force the chapter update at all.
             DoUserNavigateToAsNeeded();
             await SavePositionNow();
@@ -596,7 +596,16 @@ namespace SimpleEpubReader.Controls
             {
                 // The user clicked a link; kill it right now.
                 args.Cancel = true;
-                var task = Windows.System.Launcher.LaunchUriAsync(args.Uri);
+                if (args.Uri.Scheme == "about")
+                {
+                    // The Bitcoin for Dummies uses e.g., about:blank#ind480 for the index.
+                    await Logger.LogAsync($"MainEpubReader:HTML:OnNavigationStarting: is about: URL={args.Uri}  path={args.Uri.AbsolutePath} fragment={args.Uri.Fragment}");
+
+                }
+                else
+                {
+                    var task = Windows.System.Launcher.LaunchUriAsync(args.Uri);
+                }
             }
             if (Logger.LogExtraTiming)
             {
