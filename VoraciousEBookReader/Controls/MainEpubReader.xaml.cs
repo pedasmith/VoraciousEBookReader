@@ -252,7 +252,7 @@ namespace SimpleEpubReader.Controls
                 {
                     if (Logger.LogExtraTiming)
                     {
-                        Logger.Log($"MainEpubReader: OpenFile: About to move to location as needed. {location}");
+                        Logger.Log($"MainEpubReader: OpenFile: About to move to location as needed. {location:F3}");
                     }
                     UserNavigatedToArgument = location;
                     NavigateTo(ControlId, location); // We won't get a hairpin navigation callback
@@ -688,7 +688,7 @@ namespace SimpleEpubReader.Controls
                         var status = double.TryParse(param, out double value);
                         if (Logger.LogExtraTiming)
                         {
-                            Logger.Log($"Report:Scroll: percent={param} status={status} and update position htmlIndex={CurrHtmlIndex} scroll={CurrScrollPosition} to {value}");
+                            Logger.Log($"Report:Scroll: percent={param:F3} status={status} and update position htmlIndex={CurrHtmlIndex} scroll={CurrScrollPosition:F3} to {value:F3}");
                         }
                         if (status) 
                         {

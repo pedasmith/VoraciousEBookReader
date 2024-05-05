@@ -84,7 +84,7 @@ namespace SimpleEpubReader.Controls
         {
             var sb = new StringBuilder();
             sb.Append("Location:");
-            if (!double.IsNaN(ScrollPercent)) sb.Append ($" Percent={ScrollPercent}");
+            if (!double.IsNaN(ScrollPercent)) sb.Append ($" Percent={ScrollPercent:F3}");
             if (!string.IsNullOrEmpty(Location)) sb.Append($" NamedLocation={Location}");
             if (HtmlIndex >= 0) sb.Append($" HtmlIndex={HtmlIndex}");
             if (!string.IsNullOrEmpty(HtmlFileName)) sb.Append($" HtmlFileName={HtmlFileName}");

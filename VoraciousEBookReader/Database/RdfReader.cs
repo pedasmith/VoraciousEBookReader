@@ -399,16 +399,26 @@ namespace SimpleEpubReader.Database
                             case "dcterms:modified":
                                 if (retval.LastModified != "")
                                 {
-                                    Log($"ERROR: hasFormat has multiple {value.Name} for {logname}");
+                                    // 2024-05-05: extent and modified commonly have multiple values. As of 2024-05-05, the most recent is always 
+                                    // the first value, so that's the one to keep.
+                                    // Log($"ERROR: hasFormat has multiple {value.Name} for {logname}");
                                 }
-                                retval.LastModified = value.InnerText;
+                                else
+                                {
+                                    retval.LastModified = value.InnerText;
+                                }
                                 break;
                             case "dcterms:extent":
                                 if (retval.Extent != -1)
                                 {
-                                    Log($"ERROR: hasFormat has multiple {value.Name} for {logname}");
+                                    // 2024-05-05: extent and modified commonly have multiple values. As of 2024-05-05, the most recent is always 
+                                    // the first value, so that's the one to keep.
+                                    //Log($"ERROR: hasFormat has multiple {value.Name} for {logname}");
                                 }
-                                retval.Extent = Int32.Parse(value.InnerText);
+                                else
+                                {
+                                    retval.Extent = Int32.Parse(value.InnerText);
+                                }
                                 if (retval.Extent == 0) extentIsZero = true;
                                 break;
                             case "dcterms:isFormatOf":
