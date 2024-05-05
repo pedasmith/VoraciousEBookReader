@@ -600,7 +600,21 @@ namespace SimpleEpubReader.Controls
                 {
                     // The Bitcoin for Dummies uses e.g., about:blank#ind480 for the index.
                     await Logger.LogAsync($"MainEpubReader:HTML:OnNavigationStarting: is about: URL={args.Uri}  path={args.Uri.AbsolutePath} fragment={args.Uri.Fragment}");
-
+                    var section = args.Uri.AbsolutePath;
+                    var id = args.Uri.Fragment;
+                    if (id.StartsWith("#")) id = id.Substring(1);
+                    if (section == "blank")
+                    {
+                        // Is in this very page; jump to it. 
+                        BookLocation bookLocation = new BookLocation() { HtmlFileName="", Location = id };
+                        this.NavigateTo(ControlId, bookLocation);
+                    }
+                    else
+                    {
+                        // Will also need to find the page and go there.
+                        BookLocation bookLocation = new BookLocation() { HtmlFileName = section, Location = id };
+                        this.NavigateTo(ControlId, bookLocation);
+                    }
                 }
                 else
                 {
