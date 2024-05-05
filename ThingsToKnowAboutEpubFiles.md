@@ -125,7 +125,7 @@ chapter key might be "file%20space.xhml" and then the actual HTML is located in 
 ## Finding HTML files, problem #2: just plain wrong
 
 Thank you, United Nations, for all the work you do. But some of your EPUB files are plain weird. Example: you publish
-a perfectly good book about accessibility. Inside, the HTML files are named think like Test/FrontCover.html. But
+a perfectly good book about accessibility. Inside, the HTML files are named things like Test/FrontCover.html. But
 when you reference them in the Chapter list, you reference them like this: "../Text/FrontCover.html". The starting
 "../" is not only a waste, but it means that the key lookup fails.
 
