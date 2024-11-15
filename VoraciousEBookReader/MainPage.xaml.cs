@@ -214,6 +214,15 @@ namespace SimpleEpubReader
             try
             {
                 wd = await GutenbergFileWizard.GetDataAsync(wd, getFullData);
+                if (string.IsNullOrEmpty(wd.BookId))
+                {
+                    // 2024-11-15
+                    // Can happen for e.g., https://github.com/asido/EpubSharp/issues/12 file2 where the
+                    // book Id in the Opf is blank. Replace with the author + title + date and hope for the best?
+                    var generated_id = $"GENERATE_12_B_{wd.BD.BestAuthorDefaultIsNull}_{wd.BD.Title}";
+                    wd.BookId = generated_id;
+                    wd.BD.BookId = generated_id;
+                }
                 if (!string.IsNullOrEmpty(wd.BookId))
                 {
                     bookData = CommonQueries.BookGet(bookdb, wd.BookId);

@@ -51,6 +51,21 @@ namespace SimpleEpubReader.FileWizards
                 new Regex("<(?<tag>div)(?<middle> [a-z]*=\"[^\"]*\")(?<end>/>)"),
             };
 
+            // FAIL: starting in 2024, the Project Gutenberg books include a little <pre/> tag.
+            // This is OK for XHML (which the book I debugged was), but is a fail for HTML. In
+            // particular, the <pre/> tag is read as just a <pre> tag, and the rest of the
+            // book (which is all of it) is rendered by my WebView as having pre-formatted lines,
+            // which then don't wrap.
+            if (html.Contains("<pre/>"))
+            {
+                html = html.Replace("<pre/>", "<pre></pre>");
+            }
+
+
+            //FAIL: O'Reilly Mintduino copyright page has a <title/> element. This is 100% incorrect; the result is that browsers will interpret the entire
+            //rest of the page as one enormous title. This eventually causes a script failure with scrollTo.
+            html = html.Replace("<title/>", "<title></title>");
+
             for (int i = 0; i < regexList.Length; i++)
             {
                 var regex = regexList[i];
@@ -379,9 +394,7 @@ function SetColor(background, foreground) {
                 html = doctype + html;
             }
 
-            //FAIL: O'Reilly Mintduino copyright page has a <title/> element. This is 100% incorrect; the result is that browsers will interpret the entire
-            //rest of the page as one enormous title. This eventually causes a script failure with scrollTo.
-            html = html.Replace("<title/>", "<title></title>");
+
             return html;
         }
 

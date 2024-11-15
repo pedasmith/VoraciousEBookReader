@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 using EpubSharp.Format;
 using EpubSharp.Format.Readers;
@@ -31,6 +32,28 @@ namespace EpubSharp
             return Read(new MemoryStream(epubData), false, encoding);
         }
 
+        // Workaround an EPUB bug: at least one file (file2 of https://github.com/asido/EpubSharp/issues/12) 
+        // has an invalid Opf: the header includes the string unique-identifier="PrimaryID" mlns="http://www.idpf.org/2007/opf"
+        // which is incorrect; the "mlns" should be "xmlns" (with an x at the start).
+        // This requires unpacking all of the tidy and organized methods
+
+        public static byte[] Fixup_Issue12_B(byte[] inputXml)
+        {
+            var retval = inputXml;
+            var opfXmlAsString = Encoding.UTF8.GetString(inputXml);
+            int idx = opfXmlAsString.IndexOf("unique-identifier=\"PrimaryID\" mlns=\"http://www.idpf.org/2007/opf\"");
+            bool needs_fix = idx >= 0 && idx <= 200; // must be in the header area
+            if (needs_fix)
+            {
+                opfXmlAsString = opfXmlAsString.Replace(
+                    "unique-identifier=\"PrimaryID\" mlns=\"http://www.idpf.org/2007/opf\"",
+                    "unique-identifier=\"PrimaryID\" xmlns=\"http://www.idpf.org/2007/opf\""
+                    );
+                retval = Encoding.UTF8.GetBytes(opfXmlAsString);
+            }
+            return retval;
+        }
+
         public static EpubBook Read(Stream stream, bool leaveOpen, Encoding encoding = null)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
@@ -48,7 +71,17 @@ namespace EpubSharp
                     throw new EpubParseException("Epub OCF doesn't specify a root file.");
                 }
 
-                format.Opf = OpfReader.Read(archive.LoadXml(format.Paths.OpfAbsolutePath));
+
+                var opfXmlAsBytes = archive.LoadBytes(format.Paths.OpfAbsolutePath);
+                opfXmlAsBytes = Fixup_Issue12_B(opfXmlAsBytes);
+                XDocument opfXml;
+                using (var streamOpf = new MemoryStream(opfXmlAsBytes))
+                {
+                    var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore };
+                    using (var reader = XmlReader.Create(streamOpf, settings))
+                        opfXml = XDocument.Load(reader);
+                }
+                format.Opf = OpfReader.Read(opfXml);
 
                 var navPath = format.Opf.FindNavPath();
                 if (navPath != null)
@@ -329,7 +362,7 @@ namespace EpubSharp
                     Href = book.Format.Paths.OpfAbsolutePath,
                     ContentType = EpubContentType.Xml,
                     MimeType = ContentType.ContentTypeToMimeType[EpubContentType.Xml],
-                    Content = epubArchive.LoadBytes(book.Format.Paths.OpfAbsolutePath)
+                    Content = Fixup_Issue12_B(epubArchive.LoadBytes(book.Format.Paths.OpfAbsolutePath))
                 },
                 HtmlInReadingOrder = new List<EpubTextFile>()
             };

@@ -60,8 +60,8 @@ won't be read in.
 ## File extensions? Where we're going, we don't need file extensions!
 
 The Project Gutenberg people, bless them, will ship you an EPUB either with images like normal people,
-or without images for not particularly good reason at all. That's not a problem; there probably are some
-people who would rather save the now-inconsequential amount of space the images take up. (when Gutenberg
+or without images for no particularly good reason at all. That's not a problem; there probably are some
+people who would rather save the now-inconsequential amount of space the images take up. When Gutenberg
 started, this was a more reasonable problem: a typical floppy disk only holds about 1 meg of data; 
 for many books, the non-image version will fit onto a floppy, and the one with images will not.
 
@@ -131,7 +131,7 @@ when you reference them in the Chapter list, you reference them like this: "../T
 
 **Solution**: after a key isn't found, I check to see if it starts with "../". If so, I do a lookup without the "../"
 
-**Except** that of Clocks and Time also asks for the wrong files, in a subtly surprising way. The image file is listed with an absolute path like /OEBPS/images/bk978-1-6817-4096-6ch5f1_online.jpg. There's also an Href path like images/bk978-1-6817-4096-6ch5f1_online.jpg. Before I only looked at the absolute path; now I match either one. This leads (like make of these solutions!) to a surprise security issue: a malicious ebook could have both the absolute path and the href point to different files. One reader program might read the file one way, and another might read it another way. 
+**Except** that of Clocks and Time also asks for the wrong files, in a subtly surprising way. The image file is listed with an absolute path like /OEBPS/images/bk978-1-6817-4096-6ch5f1_online.jpg. There's also an Href path like images/bk978-1-6817-4096-6ch5f1_online.jpg. Before I only looked at the absolute path; now I match either one. This leads (like most of these solutions!) to a surprise security issue: a malicious ebook could have both the absolute path and the href point to different files. One reader program might read the file one way, and another might read it another way. 
 
 ## CSS? We don't need no stinking CSS! (AKA, the Beetle problem)
 
@@ -179,7 +179,6 @@ Small Town Romance (Bridemaids Club, book 1).
 when appropriate, and then selecting that chapter. It's not pretty, but it works.
 
 **Except** that How to Code in Go includes a bazillion duplicate id values. In particular, the code samples for each chapter have ids like *cb1-1*; these are duplicated everywhere. So when I see one and try to look it up in the table of contents, I will jump to the first chapter that includes a code sample.
-
 
 **Solution** is to not use id numbers from span items.
 
@@ -231,7 +230,7 @@ neat margin!
 The padding fix for the scroll bars works great: the ebooks have a bit of margin that pretty well is filled up
 with the scroll bar. The content is fully visible, and the scroll bar is fully usable.
 
-**Except** for the United Nations (UN) Asia-Pacifiic regional review of the 25th aniversary of the Beiing declaration.
+**Except** for the United Nations (UN) Asia-Pacific regional review of the 25th aniversary of the Beiing declaration.
 That ebook doesn't have a <body> tag; it has a <body xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace"> 
 tag. 
 
@@ -261,7 +260,7 @@ strings are sometimes plain ("Chapter 4") and sometimes include a full title.
 
 **Solution** the titles are all string.Trim'd before being used.
 
-## Title tags should not be self-closing
+## Title tags should not be self-closing (void)
 
 Many EPUB HTML files include a \<title> tag. This is all well and good. 
 
@@ -269,6 +268,11 @@ Many EPUB HTML files include a \<title> tag. This is all well and good.
 
 **Solution** is to search for \<title/> and replace it with \<title>\</title>. See also the issues with anchor tags which were also found in the O'Reilly Mintduino book and in Chronicles of Copper Boom.
 
+## PRE tags also shold not be self-closing (void)
+
+Starting in 2024, the Project Gutenberg books include a little \<pre/\> tag. This is OK for XHML (which the book I debugged was), but is a fail for HTML. In particular, the \<pre/\> tag is read as just a \<pre\> tag, and the rest of the book (which is all of it) is rendered by my WebView as having pre-formatted lines, which then don't wrap.
+
+**Solution** is to replace all \<pre/\> tags with \<pre\>\</pre\>.
 
 ## Locating a place in the book by id
 
@@ -320,3 +324,24 @@ has an large list of ways that people can be associated with an ebook.
 The Gutenberg Magna Carta, on the other hand, has no people associated with it at all. 
 
 **Solution** Carefully mark the BestAuthor property as potentially returning null.
+
+
+## Hex play orders?
+
+A bug was filed against the [EpubSharp](https://github.com/asido/EpubSharp/issues/12) library. The first sample 
+has, in the OPF file, hexademical values for the play orders! This was worked around by updating my copy of NcxReader.cs; if the play order isn't a valid decimal string, try to parse it as a hex string. Note that in theory this will cause additional problems: play order 1F will be decimal 31 which will come after play order 20 which is a decimal value. And now in theory some play orders will be duplicated (e.g., play order 15 is the same as play order 0F).
+
+
+## Malformed XML! The case of the missing "x"
+
+A bug was filed against the [EpubSharp](https://github.com/asido/EpubSharp/issues/12) library. The second  sample has a never-before seen problem: there's supposed to be an "xmlns=..." in the header.
+
+    unique-identifier="PrimaryID" mlns="http://www.idpf.org/2007/opf"
+
+The solution isn't terribly hard: just replace a bad string with a good string. This is a little difficult because the place where the bytes are used is low down in the calling hierarchy; I've had to push stuff around to make it all work.
+
+## A book with no id?
+
+A bug was filed against the [EpubSharp](https://github.com/asido/EpubSharp/issues/12) library. The second sample book has a funny issue: the book meta-data includes a blank ID. But my code assumes that books all have a valid ID; it's how I find them in the book database.
+
+Solution: when the GutenbergFileWizard looks up the book data, and the Id is blank, just create a fake ID from the author and title.

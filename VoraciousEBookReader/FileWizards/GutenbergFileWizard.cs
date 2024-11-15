@@ -3,6 +3,8 @@ using SimpleEpubReader.Database;
 using SimpleEpubReader.UwpClasses;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SimpleEpubReader.FileWizards
@@ -52,7 +54,10 @@ namespace SimpleEpubReader.FileWizards
             }
 
             var fileContents = await FileMethods.ReadBytesAsync(data.FilePath);
-            var book = EpubReader.Read(fileContents);
+            // Read as stream to make debugging a little easier.
+            Encoding encoding = Encoding.UTF8;
+            var stream = new MemoryStream(fileContents);
+            var book = EpubReader.Read(stream, false, encoding);
 
             var title = string.IsNullOrWhiteSpace(book.Title) ? data.FileName.Replace(".epub", "") : book.Title;
 

@@ -68,13 +68,30 @@ namespace EpubSharp.Format.Readers
             if (element == null) throw new ArgumentNullException(nameof(element));
             if (element.Name != NcxElements.NavPoint) throw new ArgumentException("The element is not <navPoint>", nameof(element));
 
+            // Some books have poorly-formed play order strings.
+            // See https://github.com/asido/EpubSharp/issues/12 for details. The 
+            var playOrderStr = element.Attribute(NcxNavPoint.Attributes.PlayOrder)?.Value;
+            int playOrder = 0;
+            var isDecimal = Int32.TryParse(playOrderStr, out playOrder);
+            if (!isDecimal)
+            {
+                try
+                {
+                    Convert.ToInt32(playOrderStr, 16);
+                }
+                catch (Exception)
+                {
+                    playOrder = 0;
+                }
+            }
+
             return new NcxNavPoint
             {
                 Id = (string)element.Attribute(NcxNavPoint.Attributes.Id),
                 Class = (string)element.Attribute(NcxNavPoint.Attributes.Class),
                 NavLabelText = element.Element(NcxElements.NavLabel)?.Element(NcxElements.Text)?.Value,
                 ContentSrc = (string)element.Element(NcxElements.Content)?.Attribute(NcxNavPoint.Attributes.ContentSrc),
-                PlayOrder = (int?)element.Attribute(NcxNavPoint.Attributes.PlayOrder),
+                PlayOrder = playOrder,
                 NavPoints = element.Elements(NcxElements.NavPoint).AsObjectList(ReadNavPoint)
             };
         }
