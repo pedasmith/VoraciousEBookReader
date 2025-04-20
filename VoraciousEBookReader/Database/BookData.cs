@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 #if WINDOWS_UWP
 using Windows.UI.Xaml.Controls; // is in an #if WINDOWS_UWP
 #endif
-using SimpleEpubReader.Controls;
+//using SimpleEpubReader.Controls;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -18,10 +18,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 #if IS_MIGRATION_PROJECT
 // Just dummy this up for the migration project.
 interface IGetSearchArea { }
+
+public static class Logger
+{
+    public static void Log(string str)
+    {
+        System.Diagnostics.Debug.WriteLine(str);
+    }
+}
 #else
 using SimpleEpubReader.Searching;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using SimpleEpubReader.Controls;
 #endif
 
 namespace SimpleEpubReader.Database
@@ -752,7 +761,7 @@ namespace SimpleEpubReader.Database
         private async void Si_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
         {
 #if FULL_EREADER
-            await BookSearch.DoSwipeDownloadOrReadAsync(this);
+            await SimpleEpubReader.Controls.BookSearch.DoSwipeDownloadOrReadAsync(this);
 #else
             await Task.Delay(0);
 #endif
