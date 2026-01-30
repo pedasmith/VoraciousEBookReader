@@ -22,6 +22,8 @@ using System.Threading;
 using Windows.Storage.Streams;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Core;
+using Windows.Foundation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -87,13 +89,15 @@ namespace SimpleEpubReader
             }
 #endif
 
+            Window.Current.CoreWindow.KeyDown += CoreWindow_KeyDown;
+            Window.Current.CoreWindow.KeyUp += CoreWindow_KeyUp;
+
             // COLORTHEME: no colors 
             // // // this.ActualThemeChanged += MainPage_ActualThemeChanged;
             // // // UISettings = new UISettings();
             // // // UISettings.ColorValuesChanged += UISettings_ColorValuesChanged;
             Logger.Log("MainPage:Constructor: returning");
         }
-
 
 
         Navigator Nav = Navigator.Get();
@@ -210,7 +214,7 @@ namespace SimpleEpubReader
             BookData bookData = null;
             if (bookdb == null) bookdb = BookDataContext.Get();
             string fullfname = $"{folder.Path}\\{filename}";
-            var wd = new WizardData() { FilePath = fullfname, FileName = filename};
+            var wd = new WizardData() { FilePath = fullfname, FileName = filename };
             try
             {
                 wd = await GutenbergFileWizard.GetDataAsync(wd, getFullData);
@@ -230,7 +234,7 @@ namespace SimpleEpubReader
                     //TODO: when I drop a book that's been added to the database because it was
                     // in a bookmark file (which should happen reasonably often!)
                     // then the bookData here is non-null, but also not really filled in well.
-                    if (bookData == null || bookData.BookSource.StartsWith (BookData.BookSourceBookMarkFile))
+                    if (bookData == null || bookData.BookSource.StartsWith(BookData.BookSourceBookMarkFile))
                     {
                         if (wd.BD != null)
                         {
@@ -445,10 +449,10 @@ namespace SimpleEpubReader
         }
 
 
-#region Color Handlers
+        #region Color Handlers
 
-// COLORTHEME: as of 2020-05-20, don't change colors. It turns out that color
-// changes are much more painful than anticipated.
+        // COLORTHEME: as of 2020-05-20, don't change colors. It turns out that color
+        // changes are much more painful than anticipated.
 #if NEVER_EVER_DEFINED
         private async void UISettings_ColorValuesChanged(UISettings sender, object args)
         {
@@ -583,7 +587,7 @@ namespace SimpleEpubReader
             foreach (var file in list)
             {
                 // TODO: works, but badly?
-                await file.CopyAsync (destFolder, file.Name, Windows.Storage.NameCollisionOption.ReplaceExisting);
+                await file.CopyAsync(destFolder, file.Name, Windows.Storage.NameCollisionOption.ReplaceExisting);
             }
         }
 
@@ -659,11 +663,11 @@ namespace SimpleEpubReader
 
                     var startdlg = new ContentDialog()
                     {
-                        Content = new TextBlock() 
-                        { 
-                            Text = $"Starting to download file now {uri.OriginalString}", 
-                            TextWrapping = TextWrapping.Wrap, 
-                            IsTextSelectionEnabled = true 
+                        Content = new TextBlock()
+                        {
+                            Text = $"Starting to download file now {uri.OriginalString}",
+                            TextWrapping = TextWrapping.Wrap,
+                            IsTextSelectionEnabled = true
                         },
                         Title = "Starting catalog download",
                         PrimaryButtonText = "OK",
@@ -709,7 +713,7 @@ namespace SimpleEpubReader
                 {
                     Content = new TextBlock()
                     {
-                        Text = copyError?"ERROR! ": "Download complete:" + $"size is {totalRead}",
+                        Text = copyError ? "ERROR! " : "Download complete:" + $"size is {totalRead}",
                         TextWrapping = TextWrapping.Wrap,
                         IsTextSelectionEnabled = true
                     },
@@ -755,7 +759,7 @@ namespace SimpleEpubReader
             }
         }
 
-        enum HelpType {  Classic, eBookReader};
+        enum HelpType { Classic, eBookReader };
         HelpType CurrHelpType = HelpType.Classic;
 
         private async void OnHelpToggle(object sender, RoutedEventArgs e)
@@ -817,7 +821,7 @@ namespace SimpleEpubReader
                 case 18:
                 case 19:
                 case 20:
-                    header = $"Images " + (char)(0x2469+n-10); break;
+                    header = $"Images " + (char)(0x2469 + n - 10); break;
                 case 21:
                 case 22:
                 case 23:
@@ -929,6 +933,110 @@ namespace SimpleEpubReader
         private async void OnEbookReaderSetFolder(object sender, RoutedEventArgs e)
         {
             await EBookFolder.PickFolderAsync();
+        }
+
+        bool ShiftIsPressed = false;
+
+        private void CoreWindow_KeyDown(CoreWindow sender, KeyEventArgs e)
+        {
+            switch (e.VirtualKey)
+            {
+                case Windows.System.VirtualKey.Shift:
+                    ShiftIsPressed = true;
+                    break;
+            }
+        }
+
+        private async void CoreWindow_KeyUp(CoreWindow sender, KeyEventArgs e)
+        {
+            switch (e.VirtualKey)
+            {
+                case Windows.System.VirtualKey.Shift:
+                    ShiftIsPressed = false;
+                    break;
+
+
+                case Windows.System.VirtualKey.Space:
+                    if (ShiftIsPressed)
+                    {
+                        await uiReaderControl.DoPrevPage();
+                        e.Handled = true;
+                    }
+                    else
+                    {
+                        await uiReaderControl.DoNextPage();
+                        e.Handled = true;
+                    }
+                    break;
+
+                case Windows.System.VirtualKey.PageUp:
+                case Windows.System.VirtualKey.F11:
+                    if (uiReaderControl.Visibility == Visibility.Visible)
+                    {
+                        await uiReaderControl.DoPrevPage();
+                        e.Handled = true;
+                    }
+                    break;
+                case Windows.System.VirtualKey.PageDown:
+                case Windows.System.VirtualKey.F12:
+                    if (uiReaderControl.Visibility == Visibility.Visible)
+                    {
+                        await uiReaderControl.DoNextPage();
+                        e.Handled = true;
+                    }
+                    break;
+            }
+        }
+
+        private async void OnKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Windows.System.VirtualKey.Shift:
+                    ShiftIsPressed = true;
+                    break;
+            }
+        }
+
+        private async void OnKeyUp(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Windows.System.VirtualKey.Shift:
+                    ShiftIsPressed = false;
+                    break;
+
+
+                case Windows.System.VirtualKey.Space:
+                    if (ShiftIsPressed)
+                    {
+                        await uiReaderControl.DoPrevPage();
+                        e.Handled = true;
+                    }
+                    else
+                    {
+                        await uiReaderControl.DoNextPage();
+                        e.Handled = true;
+                    }
+                    break;
+
+                case Windows.System.VirtualKey.PageUp:
+                case Windows.System.VirtualKey.F11:
+                    if (uiReaderControl.Visibility == Visibility.Visible)
+                    {
+                        await uiReaderControl.DoPrevPage();
+                        e.Handled = true;
+                    }
+                    break;
+                case Windows.System.VirtualKey.PageDown:
+                case Windows.System.VirtualKey.F12:
+                    if (uiReaderControl.Visibility == Visibility.Visible)
+                    {
+                        await uiReaderControl.DoNextPage();
+                        e.Handled = true;
+                    }
+                    break;
+            }
         }
     }
 }

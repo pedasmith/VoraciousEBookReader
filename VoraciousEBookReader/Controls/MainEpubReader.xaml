@@ -24,6 +24,7 @@
                  ContentLoading="OnContentLoading" 
                  LoadCompleted="OnContentLoadCompleted"
                  NavigationStarting="OnNavigationStarting"
+                 IsHitTestVisible="False"
                  />
 
         <Rectangle Opacity="0.2" Fill="LightBlue" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="100" Margin="0,0,50,0" PointerPressed="OnPointerPressed" PointerReleased="OnPointerReleased" />

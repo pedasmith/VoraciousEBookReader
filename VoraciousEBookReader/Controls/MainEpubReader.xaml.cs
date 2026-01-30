@@ -977,7 +977,7 @@ An internal error has occured; unable to load ebook
             await DoNextPage();
         }
 
-        private async Task DoNextPage()
+        public async Task DoNextPage()
         {
             // Logger.Log($"DoNextPage: check NextScroll...");
             if (NextScrollGoesToNextSection())
@@ -1022,6 +1022,10 @@ An internal error has occured; unable to load ebook
 
         private async void OnPrevPage(object sender, RoutedEventArgs e)
         {
+            await DoPrevPage();
+        }
+        public async Task DoPrevPage()
+        {
             if ((CurrScrollPosition <= TopScrollPosition) && (CurrHtmlIndex > 0))
             {
                 if (Logger.LogExtraTiming)
@@ -1035,6 +1039,7 @@ An internal error has occured; unable to load ebook
             {
                 await uiHtml.InvokeScriptAsync("scrollPage", new List<string>() { "-1" });
             }
+
         }
 
         private void OnFirstPage(object sender, RoutedEventArgs e)
