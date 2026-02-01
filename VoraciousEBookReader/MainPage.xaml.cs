@@ -376,7 +376,8 @@ namespace SimpleEpubReader
             foreach (var item in items)
             {
                 var storageFile = item as StorageFile;
-                if (storageFile.Name.ToLower().EndsWith(".epub"))
+                var fname = storageFile.Name.ToLower();
+                if (fname.EndsWith(".epub") || fname.EndsWith(".epub3"))
                 {
                     var newfile = await storageFile.CopyAsync(downloadFolder, storageFile.Name, Windows.Storage.NameCollisionOption.ReplaceExisting);
                     if (newfile == null)

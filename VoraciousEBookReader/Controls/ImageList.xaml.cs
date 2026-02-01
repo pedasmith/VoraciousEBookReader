@@ -50,12 +50,24 @@ namespace SimpleEpubReader.Controls
         }
         public async Task SetImageAsync()
         {
-            var bytes = EpubImage.Content;
-            BitmapImage imageSource = new BitmapImage();
-            var stream = bytes.AsBuffer().AsStream().AsRandomAccessStream(); 
-            await imageSource.SetSourceAsync(stream);
-            _ImageSource = imageSource;
-            NotifyPropertyChanged("ImageSource");
+            if (EpubImage.Content.Length == 0)
+            {
+                Logger.Log($"ERROR: {this.Href} SetImageAsync has length of zero; ignoring.");
+                return;
+            }
+            try
+            {
+                var bytes = EpubImage.Content;
+                BitmapImage imageSource = new BitmapImage();
+                var stream = bytes.AsBuffer().AsStream().AsRandomAccessStream();
+                await imageSource.SetSourceAsync(stream);
+                _ImageSource = imageSource;
+                NotifyPropertyChanged("ImageSource");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"ERROR: {this.Href} SetImageAsync has exception {ex.Message}. Ignoring.");
+            }
         }
 
         // The stuff for INotifyPropertyChanged

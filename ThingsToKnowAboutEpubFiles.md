@@ -345,3 +345,12 @@ The solution isn't terribly hard: just replace a bad string with a good string. 
 A bug was filed against the [EpubSharp](https://github.com/asido/EpubSharp/issues/12) library. The second sample book has a funny issue: the book meta-data includes a blank ID. But my code assumes that books all have a valid ID; it's how I find them in the book database.
 
 Solution: when the GutenbergFileWizard looks up the book data, and the Id is blank, just create a fake ID from the author and title.
+
+
+## IRS instructions with a zero-byte image file (2026-01-31)
+
+Normally government EPUB files are pretty good about making usable EPUB files. But this year only, the IRS's "i1040gi.epub" file (the file with USA government tax information for filing out the very common 1040 tax form) has a subtly malformed epub file. The list of images (EPUB/img) has 28 GIF files which are all fine, and one JPG file (cover-instr-i1040.jpg) which is zero bytes long.
+
+This file fails to load correctly which leads to a cascade of errors.
+
+Solution is to catch the error and silently ignore it. (Technically, I first check for zero-byte files and ignore it, and also catch the exception and ignore it. Both branches were tested, of course)
